@@ -15,5 +15,10 @@ npm run serve
 npm run build
 ```
 
+### Run frontend and backend concurrently
+```
+npx concurrently "npm run serve" "npm start"
+```
+
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
