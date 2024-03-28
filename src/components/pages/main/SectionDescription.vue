@@ -1,9 +1,9 @@
 <template>
   <div class="container">
-    <p class="description normal" v-if="!small">
+    <p class="text-center fs-5 text-uppercase text-secondary" v-if="!small">
       <slot></slot>
     </p>
-    <p class="description small" v-if="small">
+    <p class="text-center text-secondary" v-if="small">
       <slot></slot>
     </p>
   </div>
@@ -20,33 +20,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-/*.container{
-  margin-top: 10px;
-}
-
-.description {
-  text-align: center;
-  font-family: var(--description-font-family);
-
-  color: var(--text-font-color);
-}
-
-.normal {
-  font-size: var(--comm-font-size-large);
-}
-
-.small {
-  font-size: var(--comm-font-size-medium);
-}
-
-@media screen and (max-width: 768px) {
-  .normal {
-    font-size: var(--comm-font-size-medium);
-  }
-  .small {
-    font-size: var(--comm-font-size-small);
-  }
-}*/
-</style>

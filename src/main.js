@@ -1,16 +1,14 @@
 import { createApp } from 'vue'
 import App from './App.vue';
-import components from '@/components/UI';
 import router from "@/components/router/router";
-import images from '@/imagesLoader';
+import bcrypt from 'bcryptjs'
+
+import "bootstrap/dist/css/bootstrap.min.css"
+import bootstrap from 'bootstrap/dist/js/bootstrap'
 
 const app = createApp(App);
 
-components.forEach(component=> {
-    app.component(component.name, component)
-})
-
 app
     .use(router)
+    .use(bootstrap)
     .mount('#app');
-

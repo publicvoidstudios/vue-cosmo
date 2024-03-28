@@ -1,6 +1,6 @@
 <template>
-  <div class="container">
-    <div class="anchor" :id="anchorName.link"></div>
+  <div class="container-fluid text-center m-0 p-0">
+    <a class="anchor" :id="anchorName.link"></a>
     <slot name="name"></slot>
     <slot name="description"></slot>
     <slot name="content"></slot>
@@ -20,16 +20,10 @@ export default {
 </script>
 
 <style scoped>
-/*.container{
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  width: 100%;
-}
 
 .anchor {
   position: relative;
-  top: 0;
-}*/
+  top: -80px;
+}
+
 </style>

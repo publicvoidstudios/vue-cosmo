@@ -1,10 +1,14 @@
 <template>
   <slot name="name"></slot>
   <slot name="desc"></slot>
-  <div class="container">
-    <div v-for="item in items">
-      <main-item v-if="!item.contactItem" :image-u-r-l="item.imageURL" :description="item.description" :name="item.name" :contact-item="item.contactItem" @itemClicked="itemClicked"></main-item>
-      <contact-item v-if="item.contactItem" :image-u-r-l="item.imageURL" :name="item.name" :location-u-r-l="item.locationURL"></contact-item>
+  <div class="grid d-flex justify-content-center w-100">
+    <div class="row d-flex justify-content-center p-3 w-100 mw-100">
+      <div v-if="!contactsSection" v-for="item in items" class="col-lg-6 col-xxl-4 my-2" >
+        <main-item v-if="!item.contactItem" :image-u-r-l="item.img_url" :description="item.description" :name="item.name" :contact-item="item.contactItem" :html_id="item.html_id" :reviews="item.reviews"></main-item>
+      </div>
+      <div v-if="contactsSection" v-for="item in items" class="col-lg-4 col-xxl-3" >
+        <contact-item v-if="item.contactItem" :image-u-r-l="item.imageURL" :name="item.name" :location-u-r-l="item.locationURL"></contact-item>
+      </div>
     </div>
   </div>
 </template>
@@ -20,28 +24,19 @@ export default {
     items: {
       type: Array,
       required: true
+    },
+    medical: {
+      type: Boolean
+    },
+    contactsSection: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
     return {
       itemDescription: ''
     }
-  },
-  methods: {
-    itemClicked (eventArg1, eventArg2) {
-      this.$emit('itemClicked', eventArg1, eventArg2);
-    }
   }
 }
 </script>
-
-<style scoped>
-/*.container{
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: flex-start;
-}*/
-
-</style>

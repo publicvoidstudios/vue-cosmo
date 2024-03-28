@@ -1,5 +1,5 @@
 <template>
-  <div class="main-container">
+  <div class="d-flex flex-column justify-content-center align-items-center">
     <slot></slot>
   </div>
 </template>
@@ -9,13 +9,3 @@ export default {
 
 }
 </script>
-
-<style scoped>
-.main-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin: 20px;
-}
-</style>

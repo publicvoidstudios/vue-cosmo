@@ -1,13 +1,21 @@
 <template>
-    <div class="container" @click="moveToURL(locationURL)">
-      <img :src="imageURL" alt="">
-      <p class="name">{{name}}</p>
-      <p class="hint">Связаться через {{name}}</p>
+  <div class="card mb-3" style="max-width: 400px">
+    <div class="row g-0">
+      <div class="col-md-6">
+        <img :src="imageURL" class="img-fluid rounded-start h-100 object-fit-cover" :alt="imageURL" @click="moveToURL(locationURL)">
+      </div>
+      <div class="col-md-6">
+        <div class="card-body d-flex flex-column justify-content-between h-100">
+          <h5 class="card-title">{{ name }}</h5>
+          <p class="card-text">Напишите мне в {{name}}.</p>
+          <button class="btn btn-primary" @click="moveToURL(locationURL)">Связаться через {{name}}</button>
+        </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
-
 export default {
   name: 'contact-item',
   props: {
@@ -36,66 +44,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-/**{
-  --item-image-size: calc(var(--item-width) - 40px);
-}
-
-.container {
-  padding: 20px;
-  width: var(--item-width);
-  height: var(--item-contact-height);
-  border-radius: var(--comm-border-radius);
-  background-color: var(--item-back-color);
-  box-shadow: 0 0 10px 0 var(--item-box-shadow-color);
-  margin: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-
-  .name {
-    text-align: center;
-    width: 100%;
-    position: relative;
-    top: 15px;
-    opacity: 1;
-  }
-  .hint{
-    text-align: center;
-    position: relative;
-    top: -10px;
-    opacity: 0;
-    font-family: var(--description-font-family);
-    font-size: var(--comm-font-size-small);
-    color: var(--text-font-color);
-  }
-}
-
-.container:hover {
-  scale: 1.1;
-  .name {
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out;
-  }
-  .hint {
-    opacity: 1;
-    transition: opacity 0.3s ease-in-out;
-  }
-}
-
-img {
-  width: var(--item-image-size);
-  height: var(--item-image-size);
-
-  border-radius: var(--comm-border-radius);
-}
-
-.name {
-  font-size: var(--comm-font-size-medium);
-  font-family: var(--heading-font-family);
-  color: var(--headings-font-color);
-}*/
-</style>

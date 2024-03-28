@@ -1,76 +1,205 @@
 <template>
-
-  <div v-if="content.videos.length" class="content-section videos" id="videos">
-    <!--Header-->
-    <div class="content-section-header">Видео</div>
-    <div class="content-items">
-      <div class="content-item" v-for="item in content.videos">
-        <div class="item-self" v-html="replaceYouTubeWidthAndHeight(item.param2, 560, 315)"></div>
-        <span class="item-name"> {{ item.param1 }} </span>
-      </div>
-    </div>
-  </div>
-
-  <div v-if="content.articles.length" class="content-section articles" id="articles">
-    <div class="content-section-header">Статьи</div>
-    <div class="content-items">
-      <div class="content-item" v-for="item in content.articles">
-        <span class="item-name"> {{ item.param1 }} </span>
-        <div class="item-self">
-          <p>
-            {{ item.param2 }}
-          </p>
+  <div class="container-fluid">
+    <!-- Videos -->
+    <div v-if="content.videos.length && !(seeAll.contentType !== 'videos' && seeAll.active)" class="container grid" id="videos">
+      <!-- Header -->
+      <div class="row bg-body-secondary p-3 rounded shadow-sm my-4">
+        <h2 class="h3 col-md-2">Видео</h2>
+        <div class="col-md-8">
+          <input v-if="seeAll.active" type="text" class="form-control h-100" v-model="searchQuery" placeholder="Поиск">
         </div>
+        <button v-if="!seeAll.active" class="btn btn-primary col-md-2" @click="toggleSeeAll('videos')">Все видео ({{content.videos.length}})</button>
+        <button v-if="seeAll.active" class="btn btn-primary col-md-2" @click="toggleSeeAll('videos')">Назад</button>
       </div>
-    </div>
-  </div>
-
-  <div v-if="content.presentations.length" class="content-section presentations" id="presentations">
-    <div class="content-section-header">Презентации</div>
-    <div class="content-items">
-      <div class="content-item" v-for="item in content.presentations">
-        <div class="item-self" v-html="replacePPTXWidthAndHeight(item.param2, 560, 315)"></div>
-        <span class="item-name"> {{ item.param1 }} </span>
-      </div>
-    </div>
-  </div>
-
-  <div v-if="content.images.length" class="content-section images" id="images">
-    <div class="content-section-header">Галерея</div>
-    <div class="content-items">
-      <div class="content-item" v-for="item in content.images">
-        <div class="item-self">
-          <img  :src="item.param2" :alt="item.param1">
+      <!-- Content -->
+      <div class="row" :class="{'flex-nowrap overflow-hidden' : !seeAll.active}">
+        <div class="col-md-6 col-lg-4" v-for="item in paginatedVideos">
+          <div class="p-3 bg-light-subtle shadow rounded my-3">
+            <div class="ratio ratio-16x9 shadow" v-html="item.param2"></div>
+            <p class="text-dark-emphasis overflow-hidden fs-5 mt-3 fw-bold capitalize-first-letter" style="height: 85px"> {{ item.param1 }} </p>
+          </div>
         </div>
-        <span class="item-name"> {{ item.param1 }} </span>
+        <div class="container d-flex justify-content-center fs-5" v-if="!paginatedVideos.length">Ничего не найдено по запросу "{{searchQuery}}"</div>
+      </div>
+      <!-- Pagination -->
+      <div class="my-3 d-flex justify-content-center align-items-center flex-column" v-if="seeAll.active">
+
+        <nav aria-label="Page navigation" class="d-flex justify-content-center align-items-center flex-column gap-1">
+          <p class="m-0 p-0">Страница:</p>
+          <ul class="pagination">
+            <li class="page-item">
+              <button class="btn border-0" :class="{'disabled' : currentPage === 1}" @click="this.currentPage -= 1"><svg-icon type="mdi" :path="icons.arrowLeft"></svg-icon></button>
+            </li>
+            <li class="page-item" v-for="pageNumber in totalPagesVideos" :key="pageNumber" :class="{ 'active': pageNumber === currentPage}">
+              <a class="page-link" :class="{ 'rounded-start' : pageNumber === 1, 'rounded-end' : pageNumber === totalPagesVideos }" style="cursor: pointer" @click="this.currentPage = pageNumber">{{ pageNumber }}</a>
+            </li>
+            <li class="page-item">
+              <button class="btn border-0" :class="{'disabled' : currentPage === totalPagesVideos || totalPagesVideos === 0}" @click="this.currentPage += 1"><svg-icon type="mdi" :path="icons.arrowRight"></svg-icon></button>
+            </li>
+          </ul>
+        </nav>
       </div>
     </div>
+    <!-- Articles -->
+    <div v-if="content.articles.length && !(seeAll.contentType !== 'articles' && seeAll.active)" class="container grid" id="articles">
+      <!-- Header -->
+      <div class="row bg-body-secondary p-3 rounded shadow-sm my-4">
+        <h2 class="h3 col-md-2">Статьи</h2>
+        <div class="col-md-8">
+          <input v-if="seeAll.active" type="text" class="form-control h-100" v-model="searchQuery" placeholder="Поиск">
+        </div>
+        <button v-if="!seeAll.active" class="btn btn-primary col-md-2" @click="toggleSeeAll('articles')">Все статьи ({{content.articles.length}})</button>
+        <button v-if="seeAll.active" class="btn btn-primary col-md-2" @click="toggleSeeAll('articles')">Назад</button>
+      </div>
+      <!-- Content -->
+      <div class="row" :class="{'flex-nowrap overflow-hidden' : !seeAll.active}">
+        <div class="col-md-6 col-lg-4" v-for="item in paginatedArticles">
+          <article-element :article="item" :for-students="true"></article-element>
+        </div>
+        <div class="container d-flex justify-content-center fs-5" v-if="!paginatedArticles.length">Ничего не найдено по запросу "{{searchQuery}}"</div>
+      </div>
+      <!-- Pagination -->
+      <div class="my-3 d-flex justify-content-center align-items-center flex-column" v-if="seeAll.active">
+        <nav aria-label="Page navigation" class="d-flex justify-content-center align-items-center flex-column gap-1">
+          <p class="m-0 p-0">Страница:</p>
+          <ul class="pagination">
+            <li class="page-item">
+              <button class="btn border-0" :class="{'disabled' : currentPage === 1}" @click="this.currentPage -= 1"><svg-icon type="mdi" :path="icons.arrowLeft"></svg-icon></button>
+            </li>
+            <li class="page-item" v-for="pageNumber in totalPagesArticles" :key="pageNumber" :class="{ 'active': pageNumber === currentPage}">
+              <a class="page-link" :class="{ 'rounded-start' : pageNumber === 1, 'rounded-end' : pageNumber === totalPagesVideos }" style="cursor: pointer" @click="this.currentPage = pageNumber">{{ pageNumber }}</a>
+            </li>
+            <li class="page-item">
+              <button class="btn border-0" :class="{'disabled' : currentPage === totalPagesArticles || totalPagesArticles === 0}" @click="this.currentPage += 1"><svg-icon type="mdi" :path="icons.arrowRight"></svg-icon></button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+    <!-- Presentations -->
+    <div v-if="content.presentations.length && !(seeAll.contentType !== 'presentations' && seeAll.active)" class="container grid" id="presentations">
+      <!-- Header -->
+      <div class="row bg-body-secondary p-3 rounded shadow-sm my-4">
+        <h2 class="h3 col-md-2">Презентации</h2>
+        <div class="col-md-8">
+          <input v-if="seeAll.active" type="text" class="form-control h-100" v-model="searchQuery" placeholder="Поиск">
+        </div>
+        <button v-if="!seeAll.active" class="btn btn-primary col-md-2" @click="toggleSeeAll('presentations')">Все презентации ({{content.presentations.length}})</button>
+        <button v-if="seeAll.active" class="btn btn-primary col-md-2" @click="toggleSeeAll('presentations')">Назад</button>
+      </div>
+      <!-- Content -->
+      <div class="row" :class="{'flex-nowrap overflow-hidden' : !seeAll.active}">
+        <div class="col-md-6 col-lg-4" v-for="item in paginatedPresentations">
+          <div class="p-3 bg-light-subtle shadow rounded my-3">
+            <div class="ratio ratio-4x3 shadow" v-html="replacePPTXWidthAndHeight(item.param2)"></div>
+            <p class="text-dark-emphasis overflow-hidden fs-5 mt-3 fw-bold capitalize-first-letter" style="height: 85px"> {{ item.param1 }} </p>
+          </div>
+        </div>
+        <div class="container d-flex justify-content-center fs-5" v-if="!paginatedPresentations.length">Ничего не найдено по запросу "{{searchQuery}}"</div>
+      </div>
+      <!-- Pagination -->
+      <div class="my-3 d-flex justify-content-center align-items-center flex-column" v-if="seeAll.active">
+        <nav aria-label="Page navigation" class="d-flex justify-content-center align-items-center flex-column gap-1">
+          <p class="m-0 p-0">Страница:</p>
+          <ul class="pagination">
+            <li class="page-item">
+              <button class="btn border-0" :class="{'disabled' : currentPage === 1}" @click="this.currentPage -= 1"><svg-icon type="mdi" :path="icons.arrowLeft"></svg-icon></button>
+            </li>
+            <li class="page-item" v-for="pageNumber in totalPagesPresentations" :key="pageNumber" :class="{ 'active': pageNumber === currentPage}">
+              <a class="page-link" :class="{ 'rounded-start' : pageNumber === 1, 'rounded-end' : pageNumber === totalPagesPresentations }" style="cursor: pointer" @click="this.currentPage = pageNumber">{{ pageNumber }}</a>
+            </li>
+            <li class="page-item">
+              <button class="btn border-0" :class="{'disabled' : currentPage === totalPagesPresentations || totalPagesPresentations === 0}" @click="this.currentPage += 1"><svg-icon type="mdi" :path="icons.arrowRight"></svg-icon></button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+    <!-- Images -->
+    <div v-if="content.images.length && !(seeAll.contentType !== 'images' && seeAll.active)" class="container grid" id="images">
+      <!-- Header -->
+      <div class="row bg-body-secondary p-3 rounded shadow-sm my-4">
+        <h2 class="h3 col-md-2">Галерея</h2>
+        <div class="col-md-8">
+          <input v-if="seeAll.active" type="text" class="form-control h-100" v-model="searchQuery" placeholder="Поиск">
+        </div>
+        <button v-if="!seeAll.active" class="btn btn-primary col-md-2" @click="toggleSeeAll('images')">Все изображения ({{content.images.length}})</button>
+        <button v-if="seeAll.active" class="btn btn-primary col-md-2" @click="toggleSeeAll('images')">Назад</button>
+      </div>
+      <!-- Content -->
+      <div class="row" :class="{'flex-nowrap overflow-hidden' : !seeAll.active}">
+        <div class="col-md-6 col-lg-4" v-for="item in paginatedImages">
+          <div class="p-3 bg-light-subtle shadow rounded my-3">
+            <image-element :image-item="item"></image-element>
+          </div>
+        </div>
+        <div class="container d-flex justify-content-center fs-5" v-if="!paginatedImages.length">Ничего не найдено по запросу "{{searchQuery}}"</div>
+      </div>
+      <!-- Pagination -->
+      <div class="my-3 d-flex justify-content-center align-items-center flex-column" v-if="seeAll.active">
+        <nav aria-label="Page navigation" class="d-flex justify-content-center align-items-center flex-column gap-1">
+          <p class="m-0 p-0">Страница:</p>
+          <ul class="pagination">
+            <li class="page-item">
+              <button class="btn border-0" :class="{'disabled' : currentPage === 1}" @click="this.currentPage -= 1"><svg-icon type="mdi" :path="icons.arrowLeft"></svg-icon></button>
+            </li>
+            <li class="page-item" v-for="pageNumber in totalPagesImages" :key="pageNumber" :class="{ 'active': pageNumber === currentPage}">
+              <a class="page-link" :class="{ 'rounded-start' : pageNumber === 1, 'rounded-end' : pageNumber === totalPagesImages }" style="cursor: pointer" @click="this.currentPage = pageNumber">{{ pageNumber }}</a>
+            </li>
+            <li class="page-item">
+              <button class="btn border-0" :class="{'disabled' : currentPage === totalPagesImages || totalPagesImages === 0}" @click="this.currentPage += 1"><svg-icon type="mdi" :path="icons.arrowRight"></svg-icon></button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+    <!-- Empty message -->
+    <div v-else-if="!content.images.length && !content.videos.length && !content.presentations.length && !content.articles.length" class="container fs-3 text-center text-dark-emphasis">В этом подразделе пока ничего нет...</div>
   </div>
-  <div v-else-if="!content.images.length && !content.videos.length && !content.presentations.length && !content.articles.length" class="default">В этом подразделе пока ничего нет...</div>
+
 </template>
 
 <script>
 
+import ArticleElement from "@/components/pages/articles/ArticleElement.vue";
+import ImageElement from "@/components/pages/students/utilitary/ImageElement.vue";
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiChevronLeft, mdiChevronRight } from '@mdi/js';
+
 export default {
+  components: {ImageElement, ArticleElement, SvgIcon},
   props: {
     content: {
-      type: Object,
-      required: true
+      required: true,
+      default: {
+        videos: [],
+        articles: [],
+        images: [],
+        presentations: []
+      }
     }
   },
   data () {
     return {
-      pageAnchors: []
+      pageAnchors: [],
+      seeAll: {
+        contentType: '',
+        active: false
+      },
+      filteredContent: [],
+      searchQuery: '',
+      currentPage: 1,
+      itemsPerPage: 3,
+      icons: {
+        arrowLeft: mdiChevronLeft,
+        arrowRight: mdiChevronRight
+      }
     }
   },
   methods: {
-    replacePPTXWidthAndHeight(str, newWidth, newHeight) {
+    replacePPTXWidthAndHeight(str) {
       const regex = /width="(\d+px?)" height="(\d+px?)"/;
-      return str.replace(regex, `width="${newWidth}px" height="${newHeight}px"`);
-    },
-    replaceYouTubeWidthAndHeight(str, newWidth, newHeight) {
-      const regex = /width="(\d+)" height="(\d+)"/;
-      return str.replace(regex, `width="${newWidth}" height="${newHeight}"`);
+      return str.replace(regex, `style='width: 100%; height: 100%;'`);
     },
     addObjectProperty(obj, key, value) {
       return {
@@ -79,127 +208,144 @@ export default {
       };
     },
     updatePageAnchors(){
-      if(this.content.videos.length) {
+      this.pageAnchors = [];
+      if(this.content.videos.length && !this.seeAll.active) {
         this.pageAnchors = this.addObjectProperty(this.pageAnchors,0,{
           id: 0,
           link: 'videos',
           displayName: 'Видео'
         })
       }
-      if(this.content.articles.length) {
+      if(this.content.articles.length && !this.seeAll.active) {
         this.pageAnchors = this.addObjectProperty(this.pageAnchors,1,{
           id: 1,
           link: 'articles',
           displayName: 'Статьи'
         })
       }
-      if(this.content.presentations.length) {
+      if(this.content.presentations.length && !this.seeAll.active) {
         this.pageAnchors = this.addObjectProperty(this.pageAnchors,2,{
           id: 2,
           link: 'presentations',
           displayName: 'Презентации'
         })
       }
-      if(this.content.images.length) {
+      if(this.content.images.length && !this.seeAll.active) {
         this.pageAnchors = this.addObjectProperty(this.pageAnchors,3,{
           id: 3,
           link: 'images',
           displayName: 'Галерея'
         })
       }
+      this.$emit('updatePageAnchors', this.pageAnchors)
+    },
+    toggleSeeAll(type) {
+      this.seeAll.active = !this.seeAll.active;
+      if(this.seeAll.contentType.length) {
+        this.seeAll.contentType = '';
+        this.searchQuery = '';
+      } else {
+        this.seeAll.contentType = type;
+      }
+      this.updatePageAnchors()
     }
   },
   mounted() {
     this.updatePageAnchors();
-    this.$emit('updatePageAnchors', this.pageAnchors)
-  }
-}
-</script>
-
-<style scoped>
-.default {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: var(--text-font-color);
-  font-size: var(--comm-font-size-medium);
-}
-
-.content-section {
-  margin: 20px;
-  padding: 20px;
-  background-color: white;
-  box-shadow: 0 0 10px 0 var(--item-box-shadow-color);
-  border-radius: var(--comm-border-radius);
-  width: 100%;
-  max-height: 100vh;
-  overflow: auto;
-
-  .content-section-header {
-    background: linear-gradient(to right, var(--comm-color-primary), var(--comm-color-tretiary));
-    border-radius: var(--comm-border-radius);
-    height: 50px;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 25px;
-    font-size: var(--comm-font-size-medium);
-    font-family: var(--description-font-family);
-    color: var(--comm-color-secondary);
-    box-shadow: 0 0 10px 0 white;
-    z-index: 1;
-  }
-
-  .content-items {
-    margin-top: 25px;
-    z-index: 0;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-
-
-    scrollbar-width: thin;
-
-    .content-item {
-      margin: 10px;
-      padding: 10px;
-
-      display: flex;
-      flex-direction: column;
-
-      background-color: var(--item-back-color);
-      border-radius: var(--comm-border-radius-thin);
-
-      box-shadow: 0 0 10px 0 var(--item-box-shadow-color);
-
-      .item-self {
-        border-radius: var(--comm-border-radius-thin);
-        overflow: hidden;
-        max-width: 560px;
-        max-height: 315px;
-
-        p {
-          padding: 0 20px;
-          display: -webkit-box;
-          -webkit-line-clamp: 12; /* Number of lines to show */
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-
-        img {
-          width: 400px;
-        }
+  },
+  computed: {
+    totalPagesImages() {
+      if(this.content.images !== undefined) {
+        return Math.ceil(this.content.images.length / this.itemsPerPage);
+      } else {
+        return 0;
       }
-
-      .item-name {
-        margin: 20px;
-        font-family: var(--description-font-family);
-        text-align: center;
-
+    },
+    totalPagesPresentations() {
+      if(this.content.presentations !== undefined) {
+        return Math.ceil(this.content.presentations.length / this.itemsPerPage);
+      } else {
+        return 0;
+      }
+    },
+    totalPagesArticles() {
+      if(this.content.articles !== undefined) {
+        return Math.ceil(this.content.articles.length / this.itemsPerPage);
+      } else {
+        return 0;
+      }
+    },
+    totalPagesVideos() {
+      if(this.filteredVideos !== undefined) {
+        return Math.ceil(this.filteredVideos.length / this.itemsPerPage);
+      } else {
+        return 0;
+      }
+    },
+    paginatedImages() {
+      const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+      const endIndex = startIndex + this.itemsPerPage;
+      if(this.filteredImages !== undefined) {
+        return this.filteredImages.slice(startIndex, endIndex);
+      } else {
+        return [];
+      }
+    },
+    paginatedPresentations() {
+      const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+      const endIndex = startIndex + this.itemsPerPage;
+      if(this.filteredPresentations !== undefined) {
+        return this.filteredPresentations.slice(startIndex, endIndex);
+      } else {
+        return [];
+      }
+    },
+    paginatedArticles() {
+      const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+      const endIndex = startIndex + this.itemsPerPage;
+      if(this.filteredArticles !== undefined) {
+        return this.filteredArticles.slice(startIndex, endIndex);
+      } else {
+        return [];
+      }
+    },
+    paginatedVideos() {
+      const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+      const endIndex = startIndex + this.itemsPerPage;
+      if(this.filteredVideos !== undefined) {
+        return this.filteredVideos.slice(startIndex, endIndex);
+      } else {
+        return [];
+      }
+    },
+    filteredImages() {
+      if (this.searchQuery.trim() === '') {
+        return this.content.images;
+      } else {
+        return this.content.images.filter(item => item.param1.toLowerCase().includes(this.searchQuery.toLowerCase()))
+      }
+    },
+    filteredPresentations() {
+      if (this.searchQuery.trim() === '') {
+        return this.content.presentations;
+      } else {
+        return this.content.presentations.filter(item => item.param1.toLowerCase().includes(this.searchQuery.toLowerCase()))
+      }
+    },
+    filteredArticles() {
+      if (this.searchQuery.trim() === '') {
+        return this.content.articles;
+      } else {
+        return this.content.articles.filter(item => item.param1.toLowerCase().includes(this.searchQuery.toLowerCase()))
+      }
+    },
+    filteredVideos() {
+      if (this.searchQuery.trim() === '') {
+        return this.content.videos;
+      } else {
+        return this.content.videos.filter(item => item.param1.toLowerCase().includes(this.searchQuery.toLowerCase()))
       }
     }
   }
 }
-</style>
+</script>

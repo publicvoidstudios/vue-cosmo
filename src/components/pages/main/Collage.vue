@@ -1,8 +1,19 @@
 <template>
-  <div class="collage">
-    <transition-group name="fade" enter-active-class="animated" leave-active-class="animated">
-        <img v-for="(index, i) in shuffledIndexes" :src="imageList[index]" :key="i" alt="Collage Image">
-    </transition-group>
+  <div class="container-fluid m-0 p-0 overflow-hidden"
+       style="max-height: 98vh;"
+  >
+    <div class="row">
+      <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3 m-0 p-1" v-for="(index, i) in shuffledIndexes">
+        <transition-group name="fade" enter-active-class="animated" leave-active-class="animated">
+          <img
+              class="img-fluid"
+              :src="imageList[index]"
+              :key="i"
+              alt="Collage Image">
+        </transition-group>
+      </div>
+
+    </div>
   </div>
 </template>
 
@@ -75,7 +86,7 @@ export default {
 
           this.shuffledIndexes[randIndex] = unusedIndexes[randomUnusedIndex];
         }
-      }, 5000)
+      }, 1000)
     }
 
   },
@@ -90,65 +101,6 @@ export default {
 </script>
 
 <style scoped>
-/*.collage {
-  --gap: 4px;
-  --num-cols: 4;
-  --row-height: calc(100vw / var(--num-cols));
-  max-height: 100vh;
-  overflow: hidden;
-  box-sizing: border-box;
-  padding: var(--gap);
-  display: grid;
-  grid-template-columns: repeat(var(--num-cols), 1fr);
-  grid-auto-rows: var(--row-height);
-  gap: var(--gap);
-}
 
-.collage > img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: all 1s ease; !* Change the transition duration to 1s for a smoother fade effect *!
-}
-
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
-}
-
-.fade-in {
-  animation: fadeIn 0.5s forwards;
-}
-
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-@media screen and (max-width: 1200px) {
-  .collage{
-    --num-cols: 3;
-  }
-}
-
-@media screen and (max-width: 992px) {
-  .collage{
-    --num-cols: 2;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .collage{
-    --num-cols: 1;
-  }
-}*/
 
 </style>

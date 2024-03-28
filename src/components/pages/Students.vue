@@ -1,9 +1,9 @@
 <template>
   <div>
     <students-header :header_name="header_name">
-      <frag-button v-if="current_level !== 'home'" @click="backButton">
+      <button class="btn bg-body rounded h-100" v-if="current_level !== 'home'" @click="backButton">
         Назад
-      </frag-button>
+      </button>
     </students-header>
     <students-main-container>
       <sections v-if="current_level==='home'" :sections="sections" @sectionClicked="sectionSelected"></sections>
@@ -17,21 +17,34 @@
 import StudentsHeader from "@/components/pages/students/StudentsHeader.vue";
 import StudentsMainContainer from "@/components/pages/students/StudentsMainContainer.vue";
 import Sections from "@/components/pages/students/Sections.vue";
-import FragButton from "@/components/UI/FragButton.vue";
 import Subsections from "@/components/pages/students/Subsections.vue";
 import Content from "@/components/pages/students/Content.vue";
 
 export default {
-  components: {Content, Subsections, FragButton, Sections, StudentsMainContainer, StudentsHeader},
-
+  components: {Content, Subsections, Sections, StudentsMainContainer, StudentsHeader},
+  props: {
+    sections: {
+      type: Array,
+      required: true,
+      default: []
+    },
+    subsections: {
+      type: Array,
+      required: true,
+      default: []
+    },
+    content: {
+      type: Array,
+      required: true,
+      default: []
+    },
+  },
   data () {
     return {
       header_name: 'Разделы',
       storedHeaderName: '',
       current_level: 'home',
-      sections: [],
-      subsections: [],
-      content: [],
+
 
       selectedSubsections: [],
       selectedContent: [],
@@ -45,12 +58,6 @@ export default {
     }
   },
   methods: {
-    getData() {
-      console.log(JSON.parse(localStorage.getItem('sections')))
-      this.sections = JSON.parse(localStorage.getItem('sections'));
-      this.subsections = JSON.parse(localStorage.getItem('subsections'));
-      this.content = JSON.parse(localStorage.getItem('content'));
-    },
     sectionSelected(sectionHtmlId) {
       //Filter data to display
       this.selectedSubsections = this.subsections.filter(subsection => subsection.parent_section_name === sectionHtmlId);
@@ -95,12 +102,11 @@ export default {
       this.$emit('updatePageAnchors', anchors);
     }
   },
+  beforeMount() {
+    this.$emit('dataUpdateRequest');
+  },
   mounted() {
-    this.getData();
+    document.getElementById('pageTitle').innerText = 'Студентам';
   }
 }
 </script>
-
-<style scoped>
-
-</style>

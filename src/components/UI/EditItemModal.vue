@@ -1,16 +1,16 @@
 <template>
-  <div class="modal fade" id="modalCreation" tabindex="-1" aria-labelledby="modalCreationLabel" aria-hidden="true">
+  <div class="modal fade" id="modalModification" tabindex="-1" aria-labelledby="modalModificationLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable" style="max-width: 1000px;">
       <div class="modal-content">
         <div class="modal-header">
           <!--     Header of modal window     -->
-          <h1 class="modal-title fs-5" id="modalCreationLabel">Добавить {{tableNames[currentTable]}}</h1>
+          <h1 class="modal-title fs-5" id="modalModificationLabel">Изменить {{tableNames[currentTable]}}</h1>
           <!--     Close button     -->
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
         </div>
         <div class="modal-body">
           <!--     Contents of modal window     -->
-          <!-- If creating a section -->
+          <!-- If editing a section -->
           <div v-if="currentTable === 0" class="container">
             <form class="p-3">
               <div class="mb-3">
@@ -107,7 +107,7 @@
                 <label for="content_param1" class="h5" v-if="content.type === 'article'"> Название статьи:</label>
                 <label for="content_param1" class="h5" v-if="content.type === 'video'"> Название видео:</label>
                 <label for="content_param1" class="h5" v-if="content.type === 'pptx'"> Название презентации:</label>
-                <input v-if="content.type" id="content_param1" class="form-control" v-model="content.param1" type="text" required aria-describedby="content_param1_desc">
+                <input id="content_param1" class="form-control" v-model="content.param1" type="text" required aria-describedby="content_param1_desc">
                 <div id="content_param1_desc" class="mt-1" v-if="content.type === 'image'">Опишите изображение</div>
                 <div id="content_param1_desc" class="mt-1" v-if="content.type === 'article'">Назовите статью</div>
                 <div id="content_param1_desc" class="mt-1" v-if="content.type === 'video'">Назовите видео</div>
@@ -116,30 +116,22 @@
               <div class="mb-3">
                 <label for="content_param2" class="h5" v-if="content.type === 'image'"> Ссылка на изображение:</label>
                 <label for="content_param2" class="h5" v-if="content.type === 'article'"> Текст статьи:</label>
-                <label for="content_param2" class="h5" v-if="content.type === 'video'"> Ссылка на видео c YouTube:</label>
+                <label for="content_param2" class="h5" v-if="content.type === 'video'"> Код для вставки видео:</label>
                 <label for="content_param2" class="h5" v-if="content.type === 'pptx'"> Код для вставки презентации:</label>
                 <input id="content_param2" v-if="content.type === 'image'" class="form-control" v-model="content.param2" type="text" required>
-                <tt-editor v-if="content.type === 'article'" v-model="content.param2"></tt-editor>
-                <input id="content_param2" v-if="content.type === 'video'" class="form-control" v-model="content.param2" type="url" required>
-                <textarea id="content_param2" v-if="content.type === 'pptx'" class="form-control" v-model="content.param2" required></textarea>
+                <textarea id="content_param2" v-if="content.type === 'article' || content.type === 'video' || content.type === 'pptx'" class="form-control" v-model="content.param2" required> </textarea>
                 <div id="content_param1_desc" class="mt-1" v-if="content.type === 'image'">Вставьте ссылку на изображение</div>
                 <div id="content_param1_desc" class="mt-1" v-if="content.type === 'article'">Вставьте текст статьи</div>
-                <div id="content_param1_desc" class="mt-1" v-if="content.type === 'video'">Скопируйте сюда ссылку на видео с Youtube.
-                  <br>Ссылка должна иметь такой вид: https://www.youtube.com/watch?v=jNQXAC9IVRw</div>
+                <div id="content_param1_desc" class="mt-1" v-if="content.type === 'video'">Нужен код вставки видео с YouTube</div>
                 <div id="content_param1_desc" class="mt-1" v-if="content.type === 'pptx'">Нужен код вставки презентации с OneDrive</div>
               </div>
               <h5 class="h5" v-if="content.type === 'image' || content.type === 'video' || content.type === 'pptx'">Предпросмотр:</h5>
-              <div class="container" v-if="content.type !== 'article'">
-                <img class="img-fluid rounded" v-if="content.type === 'image'" :src="content.param2" :alt="content.param1">
-                <div v-if="content.type === 'pptx'">
+              <div class="container">
+                <img v-if="content.type === 'image'" :src="content.param2" :alt="content.param1">
+                <div v-if="content.type === 'video' || content.type === 'pptx'">
                   <div v-html="content.param2"></div>
+                  <p class="h2">{{content.param1}}</p>
                 </div>
-                <div
-                    v-if="content.type === 'video'"
-                    class="container col-md-12 col-xxl-6 ratio ratio-16x9"
-                    v-html="youTubeURLToIframe(content.param2)"
-                ></div>
-                <p class="h2">{{content.param1}}</p>
               </div>
             </form>
           </div>
@@ -153,9 +145,10 @@
               </div>
               <div class="mb-3">
                 <label class="h5" for="service_description">Описание услуги</label>
-                <tt-editor v-model="service.description" class="form-control" id="service_description" aria-describedby="service_description_desc"/>
+                <textarea v-model="service.description" type="text" class="form-control" id="service_description" aria-describedby="service_description_desc"/>
                 <div id="service_description_desc" class="mt-1">
-                  Необходимо описать услугу.
+                  Необходимо описать услугу. Описание должно быть конвертировано в html формат. Можно сделать здесь:
+                  <a href="https://wordhtml.com/">https://wordhtml.com/</a>
                 </div>
               </div>
               <div class="mb-3">
@@ -187,9 +180,10 @@
               </div>
               <div class="mb-3">
                 <label class="h5" for="service_description">Описание курса</label>
-                <tt-editor v-model="course.description" class="form-control" id="service_description" aria-describedby="service_description_desc"/>
+                <textarea v-model="course.description" type="text" class="form-control" id="service_description" aria-describedby="service_description_desc"/>
                 <div id="service_description_desc" class="mt-1">
-                  Необходимо описать курс.
+                  Необходимо описать курс. Описание должно быть конвертировано в html формат. Можно сделать здесь:
+                  <a href="https://wordhtml.com/">https://wordhtml.com/</a>
                 </div>
               </div>
               <div class="mb-3">
@@ -262,7 +256,7 @@ import {Editor, EditorContent} from "@tiptap/vue-3";
 import TtEditor from "@/components/pages/utils/TipTapEditor.vue";
 
 export default {
-  name: 'creation-form',
+  name: 'edit-item-modal',
   components: {TtEditor, Editor, EditorContent, SectionItem, MainItem},
   props: {
     currentTable: {
@@ -345,7 +339,6 @@ export default {
           if(this.section.name.length && this.section.img_url.length) {
             console.log(`Creating section... ARGS: section, ${this.section.name}, ${this.section.html_id}, ${this.section.img_url}`)
             this.$emit('createItem', 'section', this.section.name, this.section.html_id, this.section.img_url);
-            this.clearInput();
           } else {
             this.$emit('alertBox', `Все поля должны быть заполнены`, false)
           }
@@ -354,7 +347,6 @@ export default {
         case 1:
           if(this.subsection.parent.length && this.subsection.name.length && this.subsection.img_url.length) {
             this.$emit('createItem', 'subsection', this.subsection.parent, this.subsection.name, this.transliterate(this.subsection.name), this.subsection.img_url);
-            this.clearInput();
           } else {
             this.$emit('alertBox', `Все поля должны быть заполнены`, false)
           }
@@ -363,13 +355,12 @@ export default {
         case 2:
           if(this.content.parent.length && this.content.type.length && this.content.param1.length && this.content.param2.length) {
             if(this.content.type === 'video' ) {
-              this.content.param2 = this.youTubeURLToIframe(this.content.param2, 320, 180);
+              this.content.param2 = this.replaceYouTubeWidthAndHeight(this.content.param2, 320, 180);
             }
             if(this.content.type === 'pptx'){
               this.content.param2 = this.replacePPTXWidthAndHeight(this.content.param2, 320, 220);
             }
             this.$emit('createItem','content', this.content.parent, this.content.type, this.content.param1, this.content.param2);
-            this.clearInput();
           } else {
             this.$emit('alertBox', `Все поля должны быть заполнены`, false)
           }
@@ -378,7 +369,6 @@ export default {
         case 3:
           if(this.service.name.length && this.service.description.length && this.service.img_url.length) {
             this.$emit('createItem', 'service', this.service.name, this.transliterate(this.service.name), this.service.description, this.service.img_url);
-            this.clearInput();
           } else {
             this.$emit('alertBox', `Все поля должны быть заполнены`, false)
           }
@@ -387,7 +377,6 @@ export default {
         case 5:
           if(this.course.name.length && this.course.description.length && this.course.img_url.length) {
             this.$emit('createItem', 'course', this.course.name, this.transliterate(this.course.name), this.course.description, this.course.img_url, this.course.medical);
-            this.clearInput();
           } else {
             this.$emit('alertBox', `Все поля должны быть заполнены`, false)
           }
@@ -396,72 +385,19 @@ export default {
         case 6:
           if(this.article.title.length && this.article.body.length && this.article.author.length) {
             this.$emit('createItem', 'article', this.article.title, this.article.body, this.article.author);
-            this.clearInput();
           } else {
             this.$emit('alertBox', `Все поля должны быть заполнены`, false)
           }
           return;
       }
     },
-    clearInput() {
-      this.section = {
-        name: '',
-        html_id: '',
-        img_url: ''
-      }
-      this.subsection = {
-        parent: '',
-        name: '',
-        html_id: '',
-        img_url: ''
-      }
-      this.content = {
-        parent: '',
-        type: '',
-        param1: '',
-        param2: ''
-      }
-      this.service = {
-        name: '',
-        html_id: '',
-        description: '',
-        img_url: ''
-      }
-      this.course = {
-        name: '',
-        html_id: '',
-        description: '',
-        img_url: '',
-        medical: false
-      }
-      this.article = {
-        title: '',
-        body: '',
-        author: ''
-      }
-    },
     replacePPTXWidthAndHeight(str, newWidth, newHeight) {
       const regex = /width="(\d+px?)" height="(\d+px?)"/;
       return str.replace(regex, `width="${newWidth}px" height="${newHeight}px"`);
     },
-    youTubeURLToIframe(url){
-      const videoId = url.split('v=')[1];
-      return `<iframe
-                    style="width: 100%; height: 100%"
-                    allowfullscreen="true"
-                    autoplay="false"
-                    disablekbcontrols="false"
-                    enableiframeapi="false"
-                    endtime="0"
-                    ivloadpolicy="0"
-                    loop="false"
-                    modestbranding="false"
-                    origin=""
-                    playlist=""
-                    progressbarcolor="white"
-                    src="https://www.youtube.com/embed/${videoId}?color=white"
-                    start="0"
-              ></iframe>`
+    replaceYouTubeWidthAndHeight(str, newWidth, newHeight) {
+      const regex = /width="(\d+)" height="(\d+)"/;
+      return str.replace(regex, `width="${newWidth}" height="${newHeight}"`);
     },
     transliterate(input) {
       const rus = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
