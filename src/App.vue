@@ -15,7 +15,6 @@
         @updatePageAnchors="updatePageAnchors"
         @dataUpdateRequest="updateFromDB"
         @adminActive="disableNavBar"
-        @routeUpdate="updateRoute"
 
         :user="user"
         :warning-message="loginMessage"
@@ -332,7 +331,6 @@ export default {
     disableNavBar(disable) {
       this.navBarDisabled = disable;
     },
-
     initTheme() {
       this.theme = localStorage.getItem('theme');
       if(this.theme === undefined || this.theme === null) {
@@ -350,13 +348,19 @@ export default {
     warnUserLogin() {
       this.loginMessage = 'У вас нет прав администратора. Если вы администратор - войдите под учетной записью администратора.';
     },
-    updateRoute(to, from) {
-      this.route.to = to.path;
-      this.route.from = from.path;
+    resetLocalStorage() {
+      localStorage.setItem('sections', JSON.stringify([]));
+      localStorage.setItem('subsections', JSON.stringify([]));
+      localStorage.setItem('content', JSON.stringify([]));
+      localStorage.setItem('services', JSON.stringify([]));
+      localStorage.setItem('courses', JSON.stringify([]));
+      localStorage.setItem('reviews', JSON.stringify([]));
+      localStorage.setItem('articles', JSON.stringify([]));
     }
   },
   beforeMount() {
     this.localUser();
+    this.resetLocalStorage()
     this.updateFromDB();
   },
   mounted() {
