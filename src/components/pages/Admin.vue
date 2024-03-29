@@ -149,7 +149,7 @@
         @callUpdate="updateFromDB"
         :search-query="searchQuery"
         :search-type="searchType"
-        :sections="sections"
+        :sections="sectionsUnique"
         :subsections="subsectionsNames"
     >
     </frag-table>
@@ -175,6 +175,43 @@ import { mdiThemeLightDark, mdiMenu, mdiLogin, mdiLogout  } from '@mdi/js';
 import router from "@/components/router/router";
 
 export default {
+  props: {
+    sections: {
+      type: Array,
+      required: true,
+      default: undefined
+    },
+    subsections: {
+      type: Array,
+      required: true,
+      default: undefined
+    },
+    content: {
+      type: Array,
+      required: true,
+      default: undefined
+    },
+    servicesItems: {
+      type: Array,
+      required: true,
+      default: undefined
+    },
+    coursesItems: {
+      type: Array,
+      required: true,
+      default: undefined
+    },
+    reviews: {
+      type: Array,
+      required: true,
+      default: undefined
+    },
+    articles: {
+      type: Array,
+      required: true,
+      default: undefined
+    }
+  },
   components: {
     AlertBox, Collage, MainFlexContainer, CreationForm, FragTable, SvgIcon
   },
@@ -184,13 +221,6 @@ export default {
       sName: '',
       sId: '',
       sImgUrl: '',
-      sectionsData: [],
-      subsectionsData: [],
-      contentData: [],
-      servicesData: [],
-      coursesData: [],
-      reviewsData: [],
-      articlesData: [],
       dialogVisible: false,
       currentTable: 0,
       searchQuery: '',
@@ -215,32 +245,35 @@ export default {
     currentTableData() {
       switch (this.currentTable) {
         case 0:
-          return this.sectionsData;
+          return this.sections;
         case 1:
-          return this.subsectionsData;
+          return this.subsections;
         case 2:
-          return this.contentData;
+          return this.content;
         case 3:
-          return this.servicesData;
+          return this.servicesItems;
         case 4:
-          return this.reviewsData;
+          return this.reviews;
         case 5:
-          return this.coursesData;
+          return this.coursesItems;
         case 6:
-          return this.articlesData;
+          return this.articles;
       }
     },
     //Function to return all unique names of sections
-    sections() {
-      return [...new Set(this.sectionsData)];
+    sectionsUnique() {
+      return [...new Set(this.sections)];
     },
     subsectionsNames() {
-      return this.subsectionsData.map(subsection => {
-        return {
-          name: subsection.subsection_name,
-          html_id: subsection.html_id
-        };
-      });
+      if(this.subsections !== undefined) {
+        return this.subsections.map(subsection => {
+          return {
+            name: subsection.subsection_name,
+            html_id: subsection.html_id
+          };
+        });
+      }
+
     },
   },
   methods: {
@@ -269,17 +302,6 @@ export default {
       } else {
         this.currentTable = tableNumber;
       }
-    },
-    //Loading data from localstorage
-    async updateDataFromLocalStorage () {
-      this.sectionsData = JSON.parse(localStorage.getItem('sections'));
-      this.subsectionsData = JSON.parse(localStorage.getItem('subsections'));
-      this.contentData = JSON.parse(localStorage.getItem('content'));
-      this.servicesData = JSON.parse(localStorage.getItem('services'));
-      this.reviewsData = JSON.parse(localStorage.getItem('reviews'));
-      this.coursesData = JSON.parse(localStorage.getItem('courses'));
-      this.articlesData = JSON.parse(localStorage.getItem('articles'));
-      console.log(`App data updated from localStorage`)
     },
     //Functions for creation
     async createItem (type, ...args) {
@@ -475,132 +497,8 @@ export default {
             this.$refs.alertBox.alertMessage(`Ошибка при создании статьи: ${error.message}`, false);
           });
     },
-    //Methods to store data in localstorage
-    async loadSections () {
-      const storeSections = (data) => {
-        localStorage.setItem('sections', JSON.stringify(data));
-      }
-
-      await fetch('/api/load-sections', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({})
-      })
-          .then(res => res.json())
-          .then(data => {
-            storeSections(data);
-          });
-
-    },
-    async loadSubsections () {
-      const storeSubSections = (data) => {
-        localStorage.setItem('subsections', JSON.stringify(data));
-      }
-
-      await fetch('/api/load-subsections', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({})
-      })
-          .then(res => res.json())
-          .then(data => {
-            storeSubSections(data);
-          });
-
-    },
-    async loadContent(){
-      const storeContent = (data) => {
-        localStorage.setItem('content', JSON.stringify(data));
-      }
-
-      await fetch('/api/load-content', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({})
-      })
-          .then(res => res.json())
-          .then(data => {
-            storeContent(data);
-          });
-
-    },
-    async loadServices(){
-      const storeContent = (data) => {
-        localStorage.setItem('services', JSON.stringify(data));
-      }
-
-      await fetch('/api/load-services', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({})
-      })
-          .then(res => res.json())
-          .then(data => {
-            storeContent(data);
-          });
-
-    },
-    async loadCourses(){
-      const storeCourses = (data) => {
-        localStorage.setItem('courses', JSON.stringify(data));
-      }
-
-      await fetch('/api/load-courses', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({})
-      })
-          .then(res => res.json())
-          .then(data => {
-            storeCourses(data);
-          });
-
-    },
-    async loadReviews() {
-      const storeReviews = (data) => {
-        localStorage.setItem('reviews', JSON.stringify(data));
-      }
-
-      await fetch('/api/load-reviews', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({})
-      })
-          .then(res => res.json())
-          .then(data => {
-            storeReviews(data);
-          });
-    },
-    async loadArticles() {
-      const storeArticles = (data) => {
-        localStorage.setItem('articles', JSON.stringify(data));
-      }
-
-      await fetch('/api/load-articles', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({})
-      })
-          .then(res => res.json())
-          .then(data => {
-            storeArticles(data);
-          });
-    },
-    async updateFromDB() {
-      try {
-        await this.loadSections()
-        await this.loadSubsections()
-        await this.loadContent()
-        await this.loadServices()
-        await this.loadReviews()
-        await this.loadCourses()
-        await this.loadArticles()
-        console.log(`Data from database updated successfully.`)
-        await this.updateDataFromLocalStorage();
-        console.log(`Data from localStorage added to app`)
-      } catch (err) {
-        console.log(`An error occurred on loading data from database: ${err}`)
-      }
+    updateFromDB() {
+      this.$emit('dataUpdateRequest');
     },
     alertMessage(message, statusOK) {
       this.$refs.alertBox.alertMessage(message, statusOK)
@@ -617,11 +515,7 @@ export default {
   },
   beforeUnmount() {
     this.$emit('adminActive', false);
-  },
-  beforeRouteLeave(to, from, next) {
-    console.log('Navigating away from:', from.path);
-    next();
-  },
+  }
 }
 </script>
 

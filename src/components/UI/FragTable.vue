@@ -1,56 +1,48 @@
 ﻿<template>
-  <!-- Sections -->
-  <div v-if="currentTable === 0" class="container-fluid p-0 m-0">
-    <!--  Header of elements  -->
+  <div class="container-fluid p-0 m-0">
+    <!-- Header of table -->
     <div class="d-flex justify-content-between align-items-center mt-3 px-4 py-2">
       <h5 class="h2">{{tableNames[currentTable]}}</h5>
       <button data-bs-toggle="modal" data-bs-target="#modalCreation" class="btn btn-primary m-1">Добавить</button>
     </div>
-    <!--  Divider  -->
+    <!-- Divider -->
     <hr class="table-group-divider">
     <div class="row mw-100 mx-2 d-flex justify-content-center">
-
-      <div class="d-flex justify-content-center m-3" v-if="!paginatedRows.length && rows">
+      <!-- Loading spinner -->
+      <div class="d-flex justify-content-center m-3" v-if="rowsStatus(paginatedRows) === 'undefined'">
         <div class="spinner-border" role="status">
           <span class="visually-hidden">Загрузка...</span>
         </div>
       </div>
-
-      <div v-if="!rows">Ничего нет</div>
-
-      <div class="col-md-5 col-lg-4 col-xl-3 col-xxl-2 my-2 mx-1" v-for="row in paginatedRows">
-        <table-element :row="row">
-          <template v-slot:preview-element>
-            <section-item :img_url="row.img_url" :name="row.name"></section-item>
-          </template>
-          <template v-slot:modify-button>
+      <!-- Empty table -->
+      <div class="container d-flex justify-content-center align-items-center flex-column text-secondary fs-3" v-if="rowsStatus(paginatedRows) === 'empty'">
+        <span>Здесь пока пусто. </span>
+        <span v-if="currentTable === 4">Отзывов ещё нет.</span>
+        <span v-else>Добавьте новый элемент.</span>
+        <button v-if="currentTable !== 4" data-bs-toggle="modal" data-bs-target="#modalCreation" class="btn btn-primary m-1">Добавить</button>
+      </div>
+      <!-- Sections -->
+      <div v-if="currentTable === 0" class="col-md-5 col-lg-4 col-xl-3 col-xxl-2 my-2 mx-1" v-for="row in paginatedRows">
+        <div class="d-flex flex-column p-3 rounded shadow bg-secondary-subtle">
+          <section-item :img_url="row.img_url" :name="row.name"></section-item>
+          <div class="d-flex justify-content-between text-dark-emphasis p-3">
+            <div>
+              <p>Дата:</p>
+              <p>{{ splitDate(row.date_stamp, true) }}</p>
+            </div>
+            <div class="text-end">
+              <p>Время:</p>
+              <p>{{ splitDate(row.date_stamp, false) }}</p>
+            </div>
+          </div>
+          <div class="d-flex align-items-center justify-content-center">
             <button class="btn btn-info shadow m-1" data-bs-toggle="modal" data-bs-target="#modalModification" @click="setModifiableData('section', row.id, row.name, row.html_id, row.img_url)">Изменить</button>
-          </template>
-          <template v-slot:delete-button>
             <button data-bs-toggle="modal" data-bs-target="#modalRemoving" class="btn btn-danger m-1" @click="selectedRow = row">Удалить</button>
-          </template>
-        </table-element>
-      </div>
-    </div>
-  </div>
-  <!-- Subsections -->
-  <div v-if="currentTable === 1" class="container-fluid p-0 m-0">
-    <!--  Header of elements  -->
-    <div class="d-flex justify-content-between align-items-center mt-3 px-4 py-2">
-      <h5 class="h2">{{tableNames[currentTable]}}</h5>
-      <button data-bs-toggle="modal" data-bs-target="#modalCreation" class="btn btn-primary m-1">Добавить</button>
-    </div>
-    <!--  Divider  -->
-    <hr class="table-group-divider">
-    <div class="row d-flex justify-content-center">
-
-      <div class="d-flex justify-content-center m-3" v-if="!paginatedRows.length && rows">
-        <div class="spinner-border" role="status">
-          <span class="visually-hidden">Загрузка...</span>
+          </div>
         </div>
       </div>
-
-      <div class="col-md-5 col-lg-4 col-xl-3 col-xxl-2 m-1" v-for="row in paginatedRows">
+      <!-- Subsections -->
+      <div v-if="currentTable === 1" class="col-md-5 col-lg-4 col-xl-3 col-xxl-2 m-1" v-for="row in paginatedRows">
         <div class="d-flex flex-column m-1 p-3 rounded shadow bg-primary-subtle">
           <section-item :img_url="row.img_url" :name="row.subsection_name"></section-item>
           <p class="text-center text-dark-emphasis m-0 mt-3 p-0"><strong>Относится к разделу:</strong></p>
@@ -76,30 +68,10 @@
             </button>
             <button data-bs-toggle="modal" data-bs-target="#modalRemoving" class="btn btn-danger m-1" @click="selectedRow = row">Удалить</button>
           </div>
-
         </div>
-      </div>
     </div>
-    <hr class="table-group-divider">
-  </div>
-  <!-- Content -->
-  <div v-if="currentTable === 2" class="container-fluid p-0 m-0">
-    <!--  Header of elements  -->
-    <div class="d-flex justify-content-between align-items-center mt-3 px-4 py-2">
-      <h5 class="h2">{{tableNames[currentTable]}}</h5>
-      <button data-bs-toggle="modal" data-bs-target="#modalCreation" class="btn btn-primary m-1">Добавить</button>
-    </div>
-    <!--  Divider  -->
-    <hr class="table-group-divider">
-    <div class="row d-flex justify-content-center">
-
-      <div class="d-flex justify-content-center m-3" v-if="!paginatedRows.length && rows">
-        <div class="spinner-border" role="status">
-          <span class="visually-hidden">Загрузка...</span>
-        </div>
-      </div>
-
-      <div class="col-md-5 col-lg-4 col-xl-3 col-xxl-2 m-1" v-for="row in paginatedRows">
+      <!-- Content -->
+      <div v-if="currentTable === 2" class="col-md-5 col-lg-4 col-xl-3 col-xxl-2 m-1" v-for="row in paginatedRows">
         <div class="d-flex flex-column m-1 p-3 rounded shadow bg-primary-subtle">
           <content-preview :item="row"></content-preview>
           <div class="d-flex justify-content-between text-dark-emphasis p-3">
@@ -126,31 +98,8 @@
 
         </div>
       </div>
-    </div>
-  </div>
-  <!-- Services & Courses -->
-  <div v-if="currentTable === 3 || currentTable === 5" class="container-fluid p-0 m-0">
-    <!--  Header of elements  -->
-    <div class="d-flex justify-content-between align-items-center mt-3 px-4 py-2">
-      <h5 class="h2">{{tableNames[currentTable]}}</h5>
-      <button data-bs-toggle="modal" data-bs-target="#modalCreation" class="btn btn-primary m-1">Добавить</button>
-    </div>
-    <!--  Divider  -->
-    <hr class="table-group-divider">
-    <div class="row d-flex justify-content-center">
-
-      <div class="d-flex justify-content-center m-3" v-if="!paginatedRows.length && rows">
-        <div class="spinner-border" role="status">
-          <span class="visually-hidden">Загрузка...</span>
-        </div>
-      </div>
-
-      <div class="container d-flex justify-content-center align-items-center flex-column text-secondary fs-3" v-if="!rows">
-        Здесь пока пусто. Добавьте новый элемент.
-        <button data-bs-toggle="modal" data-bs-target="#modalCreation" class="btn btn-primary m-1">Добавить</button>
-      </div>
-
-      <div class="col-md-5 m-1" v-for="row in paginatedRows">
+      <!-- Services & Courses -->
+      <div v-if="currentTable === 3 || currentTable === 5" class="col-lg-6" v-for="row in paginatedRows">
         <div class="d-flex flex-column m-1 p-3 rounded shadow bg-primary-subtle">
           <main-item :html_id="row.html_id" :image-u-r-l="row.img_url" :description="row.description" :name="row.name" :in-preview-mode="true"></main-item>
           <div class="d-flex justify-content-between text-dark-emphasis p-3">
@@ -187,37 +136,14 @@
 
         </div>
       </div>
-    </div>
-  </div>
-  <!-- Reviews -->
-  <div v-if="currentTable === 4" class="container-fluid p-0 m-0">
-    <!--  Header of elements  -->
-    <div class="d-flex justify-content-between align-items-center mt-3 px-4 py-2">
-      <h5 class="h2">{{tableNames[currentTable]}}</h5>
-      <button data-bs-toggle="modal" data-bs-target="#modalCreation" class="btn btn-primary m-1">Добавить</button>
-    </div>
-    <!--  Divider  -->
-    <hr class="table-group-divider">
-    <div class="row d-flex justify-content-center">
-
-      <div class="d-flex justify-content-center m-3" v-if="!paginatedRows.length && rows">
-        <div class="spinner-border" role="status">
-          <span class="visually-hidden">Загрузка...</span>
-        </div>
-      </div>
-
-      <div class="container d-flex justify-content-center align-items-center flex-column text-secondary fs-3" v-if="!rows">
-        Здесь пока пусто. Добавьте новый элемент.
-        <button data-bs-toggle="modal" data-bs-target="#modalCreation" class="btn btn-primary m-1">Добавить</button>
-      </div>
-
-      <div class="col-md-5 m-1" v-for="row in paginatedRows">
+      <!-- Reviews -->
+      <div v-if="currentTable === 4" class="col-lg-6" v-for="row in paginatedRows">
         <div class="d-flex flex-column m-1 p-3 rounded shadow bg-primary-subtle">
           <!-- Review preview -->
           <div class="my-3 text-secondary">
-            Отзыв к услуге:
+            Отзыв к {{parentServiceName(row.parent_html_id).type}}:
             <br>
-            <strong>{{parentServiceName(row.parent_html_id)}}</strong>
+            <strong>{{parentServiceName(row.parent_html_id).name}}</strong>
           </div>
           <div class="text-secondary fs-5">
             <span v-if="row.rating >= 0.5" class="text-warning">&#9733;</span>
@@ -233,7 +159,7 @@
 
             <span>({{row.rating}}/5)</span>
           </div>
-          <blockquote class="text-dark fs-5">"{{row.body}}"</blockquote>
+          <blockquote class="text-light-emphasis fs-5">"{{row.body}}"</blockquote>
           <div class="m-0 p-0 d-flex justify-content-between">
             <cite class="text-end">--{{row.user_name}}</cite>
             <div class="m-0 p-0 d-flex justify-content-end">
@@ -250,31 +176,8 @@
 
         </div>
       </div>
-    </div>
-  </div>
-  <!-- Articles -->
-  <div v-if="currentTable === 6" class="container-fluid p-0 m-0">
-    <!--  Header of elements  -->
-    <div class="d-flex justify-content-between align-items-center mt-3 px-4 py-2">
-      <h5 class="h2">{{tableNames[currentTable]}}</h5>
-      <button data-bs-toggle="modal" data-bs-target="#modalCreation" class="btn btn-primary m-1">Добавить</button>
-    </div>
-    <!--  Divider  -->
-    <hr class="table-group-divider">
-    <div class="row d-flex justify-content-center">
-
-      <div class="d-flex justify-content-center m-3" v-if="!paginatedRows.length && rows">
-        <div class="spinner-border" role="status">
-          <span class="visually-hidden">Загрузка...</span>
-        </div>
-      </div>
-
-      <div class="container d-flex justify-content-center align-items-center flex-column text-secondary fs-3" v-if="!rows">
-        Здесь пока пусто. Добавьте новый элемент.
-        <button data-bs-toggle="modal" data-bs-target="#modalCreation" class="btn btn-primary m-1">Добавить</button>
-      </div>
-
-      <div class="col-md-5 m-1" v-for="row in paginatedRows">
+      <!-- Articles -->
+      <div v-if="currentTable === 6" class="col-lg-6" v-for="row in paginatedRows">
         <div class="d-flex flex-column m-1 p-3 rounded shadow bg-primary-subtle">
           <!-- Article preview -->
           <article-element :article="row"></article-element>
@@ -329,7 +232,7 @@
         </div>
         <div class="modal-body">
           <p class="text-danger">ПОДТВЕРДИТЕ ДЕЙСТВИЕ</p>
-          <p>Действительно удалить {{tableNamesSingle[currentTable]}} "{{selectedRow.name}}{{selectedRow.subsection_name}}{{selectedRow.user_name}}"?</p>
+          <p>Действительно удалить {{tableNamesSingle[currentTable]}} "{{selectedRow.name}}{{selectedRow.subsection_name}}{{selectedRow.user_name}}{{selectedRow.title}}"?</p>
           <p>Отменить это действие невозможно!</p>
         </div>
         <div class="modal-footer">
@@ -387,6 +290,15 @@
           >
             Удалить курс
           </button>
+          <button
+              v-if="currentTable === 6"
+              type="button"
+              class="btn btn-danger"
+              @click="removeRow(selectedRow.id, '/api/remove-article')"
+              data-bs-dismiss="modal"
+          >
+            Удалить статью
+          </button>
         </div>
       </div>
     </div>
@@ -398,7 +310,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <!--     Header of modal window     -->
-          <h1 class="modal-title fs-5" id="modalModificationLabel">Изменить {{tableNames[currentTable]}}</h1>
+          <h1 class="modal-title fs-5" id="modalModificationLabel">Изменить {{tableNamesSingle[currentTable]}}</h1>
           <!--     Close button     -->
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
         </div>
@@ -417,7 +329,7 @@
                     maxlength="50"
                     required
                     aria-describedby="section_name_desc"
-                    @input="sectionEditable.html_id = transliterate(sectionEditable.name)"
+                    @input="this.sectionEditable.html_id = this.transliterate(this.sectionEditable.name)"
                 >
                 <div id="section_name_desc" class="mt-1">Как будет называться новый раздел? Лимит знаков: 50</div>
               </div>
@@ -634,7 +546,7 @@
               @click="modifyItem"
               data-bs-dismiss="modal"
           >
-            Отредактировать {{tableNames[currentTable]}}
+            Применить
           </button>
         </div>
       </div>
@@ -687,7 +599,8 @@ export default {
           "Контент",
           "Услуги",
           "Отзывы",
-          "Курсы"
+          "Курсы",
+          "Статьи"
       ],
       tableNamesSingle: [
         "раздел",
@@ -695,7 +608,8 @@ export default {
         "контент",
         "услугу",
         "отзыв",
-        "курс"
+        "курс",
+        "статью"
       ],
       selectedRow: 0,
       currentPage: 1,
@@ -837,7 +751,10 @@ export default {
       const service = services.find(s => s.html_id === parent_service_html_id);
 
       if(service) {
-        return service.name;
+        return {
+          name: service.name,
+          type: 'услуге'
+        }
       } else {
         return this.parentCourseName(parent_service_html_id);
       }
@@ -848,9 +765,15 @@ export default {
       const course = courses.find(s => s.html_id === parent_course_html_id);
 
       if(course) {
-        return course.name;
+        return {
+          name: course.name,
+          type: 'курсу'
+        }
       } else {
-        return 'Ошибка: услуга/курс не найдены...';
+        return {
+          name: 'Ошибка: услуга/курс не найдены...',
+          type: 'Н/Д'
+        }
       }
     },
     transliterate(input) {
@@ -1187,6 +1110,19 @@ export default {
     replaceYouTubeWidthAndHeight(str, newWidth, newHeight) {
       const regex = /width="(\d+)" height="(\d+)"/;
       return str.replace(regex, `width="${newWidth}" height="${newHeight}"`);
+    },
+
+    rowsStatus(rows) {
+      if(rows === undefined) {
+        return 'undefined'
+      }
+      if(rows) {
+        if(rows.length > 0){
+          return 'filled'
+        } else {
+          return 'empty'
+        }
+      }
     }
   },
   computed: {
@@ -1204,7 +1140,7 @@ export default {
       if(this.filteredRows !== undefined) {
         return this.filteredRows.slice(startIndex, endIndex);
       } else {
-        return [];
+        return undefined;
       }
 
     },
@@ -1356,7 +1292,7 @@ export default {
             return this.rows;
         }
       }
-    }
+    },
   }
 }
 </script>

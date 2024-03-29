@@ -8,26 +8,33 @@
         @logout="logout"
     ></navigation-panel>
     <router-view
-        :warning-message="loginMessage"
+
         @adminEnterAttempt="warnUserLogin"
         @userLogin="setUser"
-        :user="user"
         @switchTheme="switchTheme"
         @updatePageAnchors="updatePageAnchors"
         @dataUpdateRequest="updateFromDB"
         @adminActive="disableNavBar"
-        :services-items="servicesItems"
-        :courses-items="coursesItems"
+        @routeUpdate="updateRoute"
+
+        :user="user"
+        :warning-message="loginMessage"
         :sections="sections"
         :subsections="subsections"
         :content="content"
+        :services-items="servicesItems"
+        :courses-items="coursesItems"
+        :reviews="reviews"
+        :articles="articles"
+
+
     ></router-view>
   </div>
   <footer v-if="!navBarDisabled" class="bg-light-subtle py-3 shadow border-top" style="justify-self: flex-end">
     <div class="container d-flex flex-wrap justify-content-evenly align-items-center ">
       <div class="col-12 col-md-4 d-flex align-items-center justify-content-md-start justify-content-center">
         <a href="/" class="text-body-secondary text-decoration-none me-2">
-          <img class="img-fluid" style="width: 40px" src="./resources/site_logo.png" alt="">
+          <img class="img-fluid" :class="{'invert-image-color' : theme === 'light'}" style="width: 40px;" src="./resources/site_logo.png" alt="">
         </a>
         <span class="text-body-secondary text-center">© 2024 Медицина и косметология 2.0</span>
       </div>
@@ -77,7 +84,6 @@ export default {
   components: {NavigationPanel},
   data () {
     return {
-
       pageAnchors: [],
       navBarDisabled: false,
       theme: '',
@@ -92,11 +98,19 @@ export default {
         date_stamp: ''
       },
       loginMessage: '',
-      servicesItems: [],
-      coursesItems: [],
-      sections: [],
-      subsections: [],
-      content: []
+      // Data from database
+      sections: undefined,
+      subsections: undefined,
+      content: undefined,
+      servicesItems: undefined,
+      coursesItems: undefined,
+      reviews: undefined,
+      articles: undefined,
+
+      route: {
+        to: '',
+        from: ''
+      }
     }
   },
   methods: {
@@ -134,15 +148,17 @@ export default {
       localStorage.setItem('user', JSON.stringify(this.user));
       router.push('/');
     },
-    //Method to update current page's anchors
     updatePageAnchors (anchors) {
       this.pageAnchors = anchors;
     },
-    //Methods to store data in localstorage
-    //Sections loading
+    //region Load data and store in localStorage
     async loadSections () {
       const storeSections = (data) => {
-        localStorage.setItem('sections', JSON.stringify(data));
+        if(typeof data === 'object'){
+          localStorage.setItem('sections', JSON.stringify(data));
+        } else {
+          localStorage.setItem('sections', JSON.stringify([]));
+        }
       }
 
       await fetch('/api/load-sections', {
@@ -154,12 +170,14 @@ export default {
           .then(data => {
             storeSections(data);
           });
-
     },
-    //Subsections
     async loadSubsections () {
       const storeSubSections = (data) => {
-        localStorage.setItem('subsections', JSON.stringify(data));
+        if(typeof data === 'object'){
+          localStorage.setItem('subsections', JSON.stringify(data));
+        } else {
+          localStorage.setItem('subsections', JSON.stringify([]));
+        }
       }
 
       await fetch('/api/load-subsections', {
@@ -171,12 +189,14 @@ export default {
           .then(data => {
             storeSubSections(data);
           });
-
     },
-    //Content
     async loadContent(){
       const storeContent = (data) => {
-        localStorage.setItem('content', JSON.stringify(data));
+        if(typeof data === 'object'){
+          localStorage.setItem('content', JSON.stringify(data));
+        } else {
+          localStorage.setItem('content', JSON.stringify([]));
+        }
       }
 
       await fetch('/api/load-content', {
@@ -188,12 +208,14 @@ export default {
           .then(data => {
             storeContent(data);
           });
-
     },
-
     async loadServices(){
       const storeServices = (data) => {
-        localStorage.setItem('services', JSON.stringify(data));
+        if(typeof data === 'object'){
+          localStorage.setItem('services', JSON.stringify(data));
+        } else {
+          localStorage.setItem('services', JSON.stringify([]));
+        }
       }
 
       await fetch('/api/load-services', {
@@ -209,7 +231,11 @@ export default {
     },
     async loadCourses(){
       const storeCourses = (data) => {
-        localStorage.setItem('courses', JSON.stringify(data));
+        if(typeof data === 'object'){
+          localStorage.setItem('courses', JSON.stringify(data));
+        } else {
+          localStorage.setItem('courses', JSON.stringify([]));
+        }
       }
 
       await fetch('/api/load-courses', {
@@ -225,7 +251,11 @@ export default {
     },
     async loadReviews(){
       const storeReviews = (data) => {
-        localStorage.setItem('reviews', JSON.stringify(data));
+        if(typeof data === 'object'){
+          localStorage.setItem('reviews', JSON.stringify(data));
+        } else {
+          localStorage.setItem('reviews', JSON.stringify([]));
+        }
       }
 
       await fetch('/api/load-reviews', {
@@ -241,7 +271,11 @@ export default {
     },
     async loadArticles(){
       const storeArticles = (data) => {
-        localStorage.setItem('articles', JSON.stringify(data));
+        if(typeof data === 'object'){
+          localStorage.setItem('articles', JSON.stringify(data));
+        } else {
+          localStorage.setItem('articles', JSON.stringify([]));
+        }
       }
 
       await fetch('/api/load-articles', {
@@ -255,26 +289,46 @@ export default {
           });
 
     },
+    //endregion
     async updateFromDB() {
       try {
         await this.loadSections()
+        this.sections = this.getLocalStorageData('sections');
+
         await this.loadSubsections()
+        this.subsections = this.getLocalStorageData('subsections');
+
         await this.loadContent()
+        this.content = this.getLocalStorageData('content');
+
         await this.loadServices()
-        await this.loadReviews()
+        this.servicesItems = this.getLocalStorageData('services');
+
         await this.loadCourses()
+        this.coursesItems = this.getLocalStorageData('courses');
+
+        await this.loadReviews()
+        this.reviews = this.getLocalStorageData('reviews');
+
         await this.loadArticles()
-        this.servicesItems = JSON.parse(localStorage.getItem('services'));
-        this.coursesItems = JSON.parse(localStorage.getItem('courses'));
-        this.sections = JSON.parse(localStorage.getItem('sections'));
-        this.subsections = JSON.parse(localStorage.getItem('subsections'));
-        this.content = JSON.parse(localStorage.getItem('content'));
-        console.log(`Data from database updated successfully.`)
+        this.articles = this.getLocalStorageData('articles');
+
       } catch (err) {
         console.log(`An error occurred on loading data from database: ${err}`)
       }
     },
-
+    getLocalStorageData(localstorage_item_name) {
+      const data = JSON.parse(localStorage.getItem(localstorage_item_name));
+      console.log(typeof data)
+      if(typeof data !== "object") {
+        //Error in data or empty table
+        console.log('data includes error')
+        return [];
+      } else {
+        //If data is correct
+        return data;
+      }
+    },
     disableNavBar(disable) {
       this.navBarDisabled = disable;
     },
@@ -295,13 +349,17 @@ export default {
     },
     warnUserLogin() {
       this.loginMessage = 'У вас нет прав администратора. Если вы администратор - войдите под учетной записью администратора.';
+    },
+    updateRoute(to, from) {
+      this.route.to = to.path;
+      this.route.from = from.path;
     }
   },
   beforeMount() {
     this.localUser();
+    this.updateFromDB();
   },
   mounted() {
-    this.updateFromDB();
     this.initTheme();
   }
 }
@@ -367,6 +425,10 @@ body {
   to {
     opacity: 1;
   }
+}
+
+.invert-image-color {
+  filter: invert(1);
 }
 
 </style>

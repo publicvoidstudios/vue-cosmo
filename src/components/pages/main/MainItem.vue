@@ -2,7 +2,9 @@
     <div
         class="card shadow"
     >
+      <!-- Тело карточки -->
       <div class="row g-0">
+        <!-- Изображение карточки -->
         <div class="col-md-5 d-flex align-items-start justify-content-center p-0 overflow-hidden bg-light-subtle rounded-start">
           <img
               class="rounded w-100 h-100 object-fit-cover"
@@ -11,6 +13,7 @@
               :alt="imageURL"
           >
         </div>
+        <!-- Название, рейтинг и кнопки карточки -->
         <div class="col-md-7 bg-light-subtle rounded-end">
           <div class="card-body d-flex flex-column justify-content-between h-100 mt-3">
             <h5 class="card-title text-uppercase overflow-hidden" style="height: 72px;">{{name}}</h5>
@@ -81,8 +84,6 @@
           </div>
         </div>
       </div>
-
-
       <!-- Модальное окно написания отзыва -->
       <div class="modal fade" :id="'createReviewModal' + html_id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable" style="max-width: 1000px;">
@@ -166,8 +167,7 @@
           </div>
         </div>
       </div>
-
-      <!-- Модальное окно созданного отзыва -->
+      <!-- Модальное окно уведомления пользователя о успешно созданном отзыве -->
       <div class="modal fade" :id="'createdReviewModal' + html_id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable" style="max-width: 1000px;">
           <div class="modal-content">
@@ -184,7 +184,6 @@
           </div>
         </div>
       </div>
-
       <!-- Модальное окно подробностей -->
       <div class="modal fade" :id="'moreModal_' + html_id" tabindex="-1" :aria-labelledby="'moreModalLabel' + html_id" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable" style="max-width: 1000px;">
@@ -264,30 +263,12 @@ export default {
       })
           .then(res => res.json())
           .then(res => {
-            if(res.ok) {
-              console.log(`added`)
-            } else {
-              console.log(`fail`)
-              console.log(res);
+            if(!res.ok) {
+              console.error(`Error when creating new review: ${res}`);
             }
           })
           .catch(error => {
             console.log(error.message);
-          });
-    },
-    async fetchReviews() {
-      const storeReviews = (data) => {
-        localStorage.setItem('reviews', JSON.stringify(data));
-      }
-
-      await fetch('/api/load-reviews', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({})
-      })
-          .then(res => res.json())
-          .then(data => {
-            storeReviews(data);
           });
     },
     filteredReviews() {
@@ -295,10 +276,7 @@ export default {
       const filteredAll = reviews.filter(review => review.parent_html_id === this.html_id);
       return filteredAll.filter(review => review.approved === true);
     },
-
     async setReviews() {
-      await this.fetchReviews()
-      console.log(this.filteredReviews())
       this.reviews = this.filteredReviews();
     },
     alterWord(number, form1, form2, form3) {
@@ -334,5 +312,4 @@ export default {
 .star {
   color: gold;
 }
-
 </style>

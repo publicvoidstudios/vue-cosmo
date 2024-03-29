@@ -20,8 +20,7 @@
               Ещё
             </a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="/students">Студентам</a></li>
-              <li><a class="dropdown-item" href="/admin">Панель администратора</a></li>
+              <li><a class="dropdown-item disabled" href="/students">Студентам</a></li>
               <li><a class="dropdown-item" href="/articles">Статьи</a></li>
             </ul>
           </li>
