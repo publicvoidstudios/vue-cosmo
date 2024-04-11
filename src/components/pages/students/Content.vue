@@ -14,9 +14,10 @@
       <!-- Content -->
       <div class="row" :class="{'flex-nowrap overflow-hidden' : !seeAll.active}">
         <div class="col-md-6 col-lg-4" v-for="item in paginatedVideos">
-          <div class="p-3 bg-light-subtle shadow rounded my-3">
+          <div class="p-3 bg-light-subtle shadow rounded my-3 position-relative">
             <div class="ratio ratio-16x9 shadow" v-html="item.param2"></div>
             <p class="text-dark-emphasis overflow-hidden fs-5 mt-3 fw-bold capitalize-first-letter" style="height: 85px"> {{ item.param1 }} </p>
+            <div class="bg-transparent rounded position-absolute top-0 start-0 w-100 h-100 z-1" style="cursor: pointer" @click="this.$router.push(`/students/content/${item.id}`);"></div>
           </div>
         </div>
         <div class="container d-flex justify-content-center fs-5" v-if="!paginatedVideos.length">Ничего не найдено по запросу "{{searchQuery}}"</div>
@@ -54,7 +55,10 @@
       <!-- Content -->
       <div class="row" :class="{'flex-nowrap overflow-hidden' : !seeAll.active}">
         <div class="col-md-6 col-lg-4" v-for="item in paginatedArticles">
-          <article-element :article="item" :for-students="true"></article-element>
+          <div class="position-relative">
+            <article-element :article="item" :for-students="true"></article-element>
+            <div class="bg-transparent rounded position-absolute top-0 start-0 w-100 h-100 z-1" style="cursor: pointer" @click="this.$router.push(`/students/content/${item.id}`);"></div>
+          </div>
         </div>
         <div class="container d-flex justify-content-center fs-5" v-if="!paginatedArticles.length">Ничего не найдено по запросу "{{searchQuery}}"</div>
       </div>
@@ -90,9 +94,10 @@
       <!-- Content -->
       <div class="row" :class="{'flex-nowrap overflow-hidden' : !seeAll.active}">
         <div class="col-md-6 col-lg-4" v-for="item in paginatedPresentations">
-          <div class="p-3 bg-light-subtle shadow rounded my-3">
+          <div class="p-3 bg-light-subtle shadow rounded my-3 position-relative">
             <div class="ratio ratio-4x3 shadow" v-html="replacePPTXWidthAndHeight(item.param2)"></div>
             <p class="text-dark-emphasis overflow-hidden fs-5 mt-3 fw-bold capitalize-first-letter" style="height: 85px"> {{ item.param1 }} </p>
+            <div class="bg-transparent rounded position-absolute top-0 start-0 w-100 h-100 z-1" style="cursor: pointer" @click="this.$router.push(`/students/content/${item.id}`);"></div>
           </div>
         </div>
         <div class="container d-flex justify-content-center fs-5" v-if="!paginatedPresentations.length">Ничего не найдено по запросу "{{searchQuery}}"</div>
@@ -129,8 +134,9 @@
       <!-- Content -->
       <div class="row" :class="{'flex-nowrap overflow-hidden' : !seeAll.active}">
         <div class="col-md-6 col-lg-4" v-for="item in paginatedImages">
-          <div class="p-3 bg-light-subtle shadow rounded my-3">
+          <div class="p-3 bg-light-subtle shadow rounded my-3 position-relative">
             <image-element :image-item="item"></image-element>
+            <div class="bg-transparent rounded position-absolute top-0 start-0 w-100 h-100 z-1" style="cursor: pointer" @click="this.$router.push(`/students/content/${item.id}`);"></div>
           </div>
         </div>
         <div class="container d-flex justify-content-center fs-5" v-if="!paginatedImages.length">Ничего не найдено по запросу "{{searchQuery}}"</div>
@@ -165,6 +171,7 @@ import ArticleElement from "@/components/pages/articles/ArticleElement.vue";
 import ImageElement from "@/components/pages/students/utilitary/ImageElement.vue";
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiChevronLeft, mdiChevronRight } from '@mdi/js';
+import router from "@/components/router/router";
 
 export default {
   components: {ImageElement, ArticleElement, SvgIcon},
@@ -197,6 +204,9 @@ export default {
     }
   },
   methods: {
+    router() {
+      return router
+    },
     replacePPTXWidthAndHeight(str) {
       const regex = /width="(\d+px?)" height="(\d+px?)"/;
       return str.replace(regex, `style='width: 100%; height: 100%;'`);
@@ -248,6 +258,26 @@ export default {
         this.seeAll.contentType = type;
       }
       this.updatePageAnchors()
+    },
+    transliterate(input) {
+      const rus = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
+      const eng = ["a", "b", "v", "g", "d", "e", "yo", "zh", "z", "i", "y", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "f", "kh", "ts", "ch", "sh", "shch", "", "y", "", "e", "yu", "ya"];
+
+      return input.split('').map(function (char) {
+        // Check if the character is a Cyrillic letter
+        if (/[\u0400-\u04FF]/.test(char)) {
+          let idx = rus.indexOf(char.toLowerCase());
+          if (idx >= 0) {
+            return eng[idx];
+          }
+        }
+        // Swap space character with an underscore character
+        if (char === " ") {
+          return "_";
+        }
+        // Return the character as is if it's not a Cyrillic letter
+        return char;
+      }).join('');
     }
   },
   mounted() {

@@ -264,7 +264,11 @@ export default {
         { slug: 'underline', icon: mdiFormatUnderline, active: 'underline' },
         { slug: 'bulletList', icon: mdiFormatListBulleted, active: 'bulletList' },
         { slug: 'orderedList', icon: mdiFormatListNumbered, active: 'orderedList' },
-
+        { slug: 'heading1', icon: mdiFormatHeader2, active: 'heading', level:{level: 2}},
+        { slug: 'heading2', icon: mdiFormatHeader3, active: 'heading', level:{level: 3}},
+        { slug: 'heading3', icon: mdiFormatHeader4, active: 'heading', level:{level: 4}},
+        { slug: 'image', icon: mdiFileImage, active: 'image'},
+        { slug: 'video', icon: mdiFileVideo, active: 'video'}
       ]
     }
   },

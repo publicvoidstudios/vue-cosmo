@@ -309,8 +309,6 @@ export default {
   mounted() {
     document.getElementById('pageTitle').innerText = 'Медицина и косметология 2.0';
     this.$emit('updatePageAnchors', this.pageAnchors);
-    console.log(images["persons/elus"]);
   }
-
 }
 </script>

@@ -24,7 +24,6 @@
     </div>
     <hr>
     <article style="max-height: 300px" class="overflow-hidden" v-html="article.param2"></article>
-    <button class="btn btn-primary align-self-end mt-3" data-bs-toggle="modal" :data-bs-target="'#modalReader' + article.id">Читать полностью</button>
   </div>
 
   <!-- Modal reader -->
@@ -47,33 +46,6 @@
           </div>
           <hr>
           <div v-html="article.body"></div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Закрыть">Закрыть</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div v-if="forStudents" class="modal fade" :id="'modalReader' + article.id" tabindex="-1" :aria-labelledby="'modalReaderLabel' + article.id" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable" style="max-width: 1000px">
-      <div class="modal-content">
-        <div class="modal-header">
-          <!--     Header of modal window     -->
-          <h2 class="modal-title fs-5" :id="'modalReaderLabel' + article.id">{{ article.param1 }}</h2>
-          <!--     Close button     -->
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
-        </div>
-        <div class="modal-body">
-          <div class="d-flex justify-content-between">
-            <span class="small"></span>
-            <div>
-              <span class="small">{{splitDate(article.date_stamp, true)}}, </span>
-              <span class="small">{{splitDate(article.date_stamp, false)}}</span>
-            </div>
-          </div>
-          <hr>
-          <div v-html="article.param2"></div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Закрыть">Закрыть</button>
@@ -123,7 +95,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-</style>

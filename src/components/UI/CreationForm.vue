@@ -363,7 +363,7 @@ export default {
         case 2:
           if(this.content.parent.length && this.content.type.length && this.content.param1.length && this.content.param2.length) {
             if(this.content.type === 'video' ) {
-              this.content.param2 = this.youTubeURLToIframe(this.content.param2, 320, 180);
+              this.content.param2 = this.youTubeURLToIframe(this.content.param2);
             }
             if(this.content.type === 'pptx'){
               this.content.param2 = this.replacePPTXWidthAndHeight(this.content.param2, 320, 220);
@@ -445,23 +445,17 @@ export default {
       return str.replace(regex, `width="${newWidth}px" height="${newHeight}px"`);
     },
     youTubeURLToIframe(url){
-      const videoId = url.split('v=')[1];
-      return `<iframe
+      if(url) {
+        const videoId = url.split('v=')[1].split('&')[0];
+        return `<iframe
                     style="width: 100%; height: 100%"
-                    allowfullscreen="true"
-                    autoplay="false"
-                    disablekbcontrols="false"
-                    enableiframeapi="false"
-                    endtime="0"
-                    ivloadpolicy="0"
-                    loop="false"
-                    modestbranding="false"
-                    origin=""
-                    playlist=""
-                    progressbarcolor="white"
+                    allowfullscreen
                     src="https://www.youtube.com/embed/${videoId}?color=white"
-                    start="0"
               ></iframe>`
+      } else {
+        return 'Ссылка не указана'
+      }
+
     },
     transliterate(input) {
       const rus = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
@@ -483,16 +477,6 @@ export default {
         return char;
       }).join('');
     }
-  },
-  mounted() {
-
-  },
-  beforeUnmount() {
-
   }
 }
 </script>
-
-<style scoped>
-
-</style>

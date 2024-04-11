@@ -89,7 +89,7 @@
                 class="btn btn-info m-1"
                 data-bs-toggle="modal"
                 data-bs-target="#modalModification"
-                @click="setModifiableData('content', row.id, row.subsection_id, row.content_type, row.param1, row.param2)"
+                @click="setModifiableData('content', row.id, row.subsection_id, row.content_type, row.param1, youTubeIFrameToURL(row.param2))"
             >
               Изменить
             </button>
@@ -422,21 +422,23 @@
               <div class="mb-3">
                 <label for="content_param2" class="h5" v-if="contentEditable.content_type === 'image'"> Ссылка на изображение:</label>
                 <label for="content_param2" class="h5" v-if="contentEditable.content_type === 'article'"> Текст статьи:</label>
-                <label for="content_param2" class="h5" v-if="contentEditable.content_type === 'video'"> Код для вставки видео:</label>
+                <label for="content_param2" class="h5" v-if="contentEditable.content_type === 'video'"> Ссылка на видео с YouTube:</label>
                 <label for="content_param2" class="h5" v-if="contentEditable.content_type === 'pptx'"> Код для вставки презентации:</label>
                 <input id="content_param2" v-if="contentEditable.content_type === 'image'" class="form-control" v-model="contentEditable.param2" type="text" required>
                 <textarea id="content_param2" v-if="contentEditable.content_type === 'video' || contentEditable.content_type === 'pptx'" class="form-control" v-model="contentEditable.param2" required> </textarea>
                 <tt-editor v-if="contentEditable.content_type === 'article'" class="form-control" v-model="contentEditable.param2"></tt-editor>
                 <div id="content_param1_desc" class="mt-1" v-if="contentEditable.content_type === 'image'">Вставьте ссылку на изображение</div>
                 <div id="content_param1_desc" class="mt-1" v-if="contentEditable.content_type === 'article'">Вставьте текст статьи</div>
-                <div id="content_param1_desc" class="mt-1" v-if="contentEditable.content_type === 'video'">Нужен код вставки видео с YouTube</div>
+                <div id="content_param1_desc" class="mt-1" v-if="contentEditable.content_type === 'video'">Скопируйте сюда ссылку на видео с Youtube.
+                  <br>Ссылка должна иметь такой вид: https://www.youtube.com/watch?v=jNQXAC9IVRw</div>
                 <div id="content_param1_desc" class="mt-1" v-if="contentEditable.content_type === 'pptx'">Нужен код вставки презентации с OneDrive</div>
               </div>
               <h5 class="h5" v-if="contentEditable.content_type === 'image' || contentEditable.content_type === 'video' || contentEditable.content_type === 'pptx'">Предпросмотр:</h5>
               <div class="container">
                 <img v-if="contentEditable.content_type === 'image'" style="max-width: 100%" :src="contentEditable.param2" :alt="contentEditable.param1">
                 <div v-if="contentEditable.content_type === 'video' || contentEditable.content_type === 'pptx'">
-                  <div v-html="contentEditable.param2"></div>
+                  <div v-if="contentEditable.content_type === 'pptx'" class="ratio ratio-16x9" v-html="contentEditable.param2"></div>
+                  <div v-if="contentEditable.content_type === 'video'" class="ratio ratio-16x9" v-html="youTubeURLToIframe(contentEditable.param2)"></div>
                   <p class="h2">{{contentEditable.param1}}</p>
                 </div>
               </div>
@@ -806,7 +808,9 @@ export default {
                 this.sectionEditable.id,
                 this.sectionEditable.name,
                 this.sectionEditable.html_id,
-                this.sectionEditable.img_url);
+                this.sectionEditable.img_url
+            )
+            this.setModifiableData('section', null, null, null, null, null, null)
           } else {
             this.$emit('alertBox', `Все поля должны быть заполнены`, false)
           }
@@ -821,6 +825,7 @@ export default {
                 this.subsectionEditable.html_id,
                 this.subsectionEditable.img_url
             )
+            this.setModifiableData('subsection', null, null, null, null, null, null)
           } else {
             this.$emit('alertBox', `Все поля должны быть заполнены`, false)
           }
@@ -829,7 +834,7 @@ export default {
         case 2:
           if(this.contentEditable.subsection_id.length && this.contentEditable.content_type.length && this.contentEditable.param1.length && this.contentEditable.param2.length) {
             if(this.contentEditable.content_type === 'video' ) {
-              this.contentEditable.param2 = this.replaceYouTubeWidthAndHeight(this.contentEditable.param2, 320, 180);
+              this.contentEditable.param2 = this.youTubeURLToIframe(this.contentEditable.param2);
             }
             if(this.contentEditable.content_type === 'pptx'){
               this.contentEditable.param2 = this.replacePPTXWidthAndHeight(this.contentEditable.param2, 320, 220);
@@ -841,6 +846,7 @@ export default {
                 this.contentEditable.param1,
                 this.contentEditable.param2
             )
+            this.setModifiableData('content', null, null, null, null, null, null)
           } else {
             this.$emit('alertBox', `Все поля должны быть заполнены`, false)
           }
@@ -855,6 +861,7 @@ export default {
                 this.serviceEditable.description,
                 this.serviceEditable.img_url
             )
+            this.setModifiableData('service', null, null, null, null, null, null)
           } else {
             this.$emit('alertBox', `Все поля должны быть заполнены`, false)
           }
@@ -870,6 +877,7 @@ export default {
                 this.courseEditable.img_url,
                 this.courseEditable.medical
             )
+            this.setModifiableData('course', null, null, null, null, null, null)
           } else {
             this.$emit('alertBox', `Все поля должны быть заполнены`, false)
           }
@@ -883,6 +891,7 @@ export default {
                 this.articleEditable.body,
                 this.articleEditable.author
             )
+            this.setModifiableData('article', null, null, null, null, null, null)
           } else {
             this.$emit('alertBox', `Все поля должны быть заполнены`, false)
           }
@@ -1107,11 +1116,23 @@ export default {
       const regex = /width="(\d+px?)" height="(\d+px?)"/;
       return str.replace(regex, `width="${newWidth}px" height="${newHeight}px"`);
     },
-    replaceYouTubeWidthAndHeight(str, newWidth, newHeight) {
-      const regex = /width="(\d+)" height="(\d+)"/;
-      return str.replace(regex, `width="${newWidth}" height="${newHeight}"`);
-    },
+    youTubeURLToIframe(url){
+      if(url) {
+        const videoId = url.split('v=')[1].split('&')[0];
+        return `<iframe
+                    style="width: 100%; height: 100%"
+                    allowfullscreen
+                    src="https://www.youtube.com/embed/${videoId}?color=white"
+              ></iframe>`
+      } else {
+        return 'Ссылка не указана'
+      }
 
+    },
+    youTubeIFrameToURL(iframe) {
+      const url = iframe.split('src="')[1].split('"')[0];
+      return url.split('embed/')[0] + 'watch?v=' + url.split('embed/')[1];
+    },
     rowsStatus(rows) {
       if(rows === undefined) {
         return 'undefined'

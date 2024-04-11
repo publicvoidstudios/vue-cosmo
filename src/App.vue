@@ -25,7 +25,7 @@
         :courses-items="coursesItems"
         :reviews="reviews"
         :articles="articles"
-
+        :comments="studentsComments"
 
     ></router-view>
   </div>
@@ -105,11 +105,7 @@ export default {
       coursesItems: undefined,
       reviews: undefined,
       articles: undefined,
-
-      route: {
-        to: '',
-        from: ''
-      }
+      studentsComments: undefined
     }
   },
   methods: {
@@ -288,6 +284,26 @@ export default {
           });
 
     },
+    async loadStudentsComments(){
+      const storeStudentsComments = (data) => {
+        if(typeof data === 'object'){
+          localStorage.setItem('students_comments', JSON.stringify(data));
+        } else {
+          localStorage.setItem('students_comments', JSON.stringify([]));
+        }
+      }
+
+      await fetch('/api/load-scomments', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({})
+      })
+          .then(res => res.json())
+          .then(data => {
+            storeStudentsComments(data);
+          });
+
+    },
     //endregion
     async updateFromDB() {
       try {
@@ -312,13 +328,16 @@ export default {
         await this.loadArticles()
         this.articles = this.getLocalStorageData('articles');
 
+        await this.loadStudentsComments()
+        this.studentsComments = this.getLocalStorageData('students_comments');
+
       } catch (err) {
         console.log(`An error occurred on loading data from database: ${err}`)
       }
     },
     getLocalStorageData(localstorage_item_name) {
       const data = JSON.parse(localStorage.getItem(localstorage_item_name));
-      console.log(typeof data)
+
       if(typeof data !== "object") {
         //Error in data or empty table
         console.log('data includes error')
@@ -356,6 +375,7 @@ export default {
       localStorage.setItem('courses', JSON.stringify([]));
       localStorage.setItem('reviews', JSON.stringify([]));
       localStorage.setItem('articles', JSON.stringify([]));
+      localStorage.setItem('students_comments', JSON.stringify([]));
     }
   },
   beforeMount() {
@@ -381,10 +401,6 @@ export default {
 
 html {
   scroll-behavior: smooth;
-}
-
-body {
-  background-color: #f0f0f0;
 }
 
 .capitalize-first-letter:first-letter {

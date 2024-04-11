@@ -1,12 +1,12 @@
 {
   "name": "vue-cosmo",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "start": "node server.js",
-    "production": "concurrently \\\"npm run serve\\\" \\\"npm start\\\""
+    "production": "npx concurrently \\\"npm run serve\\\" \\\"npm start\\\""
   },
   "dependencies": {
     "@jamescoyle/vue-icon": "^0.1.2",

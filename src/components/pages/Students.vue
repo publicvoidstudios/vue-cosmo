@@ -1,7 +1,7 @@
 <template>
   <div>
     <students-header :header_name="header_name">
-      <button class="btn bg-body rounded h-100" v-if="current_level !== 'home'" @click="backButton">
+      <button class="btn bg-body rounded h-100" v-if="current_level !== 'home'" @click="goBack">
         Назад
       </button>
     </students-header>
@@ -82,7 +82,7 @@ export default {
       //Set level of a page
       this.current_level = 'subsection';
     },
-    backButton () {
+    goBack () {
       switch (this.current_level) {
         case "home":
           this.$emit('updatePageAnchors',[]);
@@ -96,6 +96,7 @@ export default {
           this.current_level = 'section';
           this.header_name = this.storedHeaderName;
           this.$emit('updatePageAnchors',[]);
+          return;
       }
     },
     updatePageAnchors (anchors) {

@@ -220,6 +220,29 @@ expressApp.post('/api/create-article', (req, res) => {
 
     }
 })
+expressApp.post('/api/create-scomment', (req, res) => {
+    const { content_id, user_id, body } = req.body;
+
+    if(!content_id || !user_id || !body){
+        return res.status(400).json({ error: 'Not all required fields are provided.' });
+    } else {
+        db("students_comments").insert({
+            content_id: content_id,
+            user_id: user_id,
+            body: body,
+            likes: [],
+            dislikes: []
+        })
+            .returning(["content_id", "user_id", "body", "likes", "dislikes"])
+            .then(data => {
+                res.json()
+            })
+            .catch(err => {
+                console.error(err); // Log the error to the console
+                res.json(err.detail);
+            })
+    }
+})
 
 //endregion
 
@@ -336,6 +359,22 @@ expressApp.post('/api/load-articles', (req, res) => {
             res.status(500).json('Error: ' + err);
         });
 })
+expressApp.post('/api/load-scomments', (req, res) => {
+    const { id, date_stamp, content_id, user_id, body, likes, dislikes } = req.body;
+
+    db.select("id","date_stamp", "content_id", "user_id", "body", "likes", "dislikes")
+        .from("students_comments")
+        .then(data => {
+            if (data.length) {
+                res.json(data);
+            } else {
+                res.json('Error: No comments found.');
+            }
+        })
+        .catch(err => {
+            res.status(500).json('Error: ' + err);
+        });
+})
 //endregion
 
 //region REMOVE REQUESTS
@@ -442,6 +481,21 @@ expressApp.delete('/api/remove-article', (req, res) => {
         })
         .catch(err => {
             res.json(`Error removing article: ${err.message}.`);
+        });
+});
+expressApp.delete('/api/remove-scomment', (req, res) => {
+    const { id } = req.body;
+
+    db('students_comments')
+        .where({
+            id: id
+        })
+        .del()
+        .then(() => {
+            res.json(`Removed comment with id: ${id}.`);
+        })
+        .catch(err => {
+            res.json(`Error removing comment: ${err.message}.`);
         });
 });
 //endregion
@@ -730,6 +784,65 @@ expressApp.put('/api/modify-article', (req, res) => {
         .catch(err => {
             console.error(err);
             res.status(500).json({ error: 'Не удалось обновить статью' });
+        });
+})
+expressApp.put('/api/modify-scomment', (req, res) => {
+    const { id, likes, dislikes } = req.body;
+
+    if (!id) {
+        return res.status(400).json({ error: 'Не удалось определить ID комментария' });
+    }
+
+    db("students_comments")
+        .where({ id: id })
+        .select('likes', 'dislikes')
+        .then(data => {
+            let updatedLikes = data[0].likes || [];
+            let updatedDislikes = data[0].dislikes || [];
+
+            //If user likes
+            if (likes) {
+                //If user didn't like it before
+                if (!updatedLikes.includes(parseInt(likes))) {
+                    //Add user to liked
+                    updatedLikes.push(parseInt(likes));
+                } else {
+                    //Remove user from liked
+                    updatedLikes = updatedLikes.filter(item => item !== parseInt(likes));
+                }
+                //Also need to check, if user disliked before
+                if(updatedDislikes.includes(parseInt(likes))){
+                    //Remove user from disliked
+                    updatedDislikes = updatedDislikes.filter(item => item !== parseInt(likes))
+                }
+            }
+            //If user dislikes
+            if (dislikes) {
+                if (!updatedDislikes.includes(parseInt(dislikes))) {
+                    updatedDislikes.push(parseInt(dislikes));
+                } else {
+                    updatedDislikes = updatedDislikes.filter(item => item !== parseInt(dislikes));
+                }
+                //Also need to check, if user liked before
+                if(updatedLikes.includes(parseInt(dislikes))){
+                    //Remove user from liked
+                    updatedLikes = updatedLikes.filter(item => item !== parseInt(dislikes))
+                }
+            }
+
+            return db("students_comments")
+                .where({ id: id })
+                .update({
+                    likes: updatedLikes,
+                    dislikes: updatedDislikes
+                });
+        })
+        .then(() => {
+            res.json({ message: 'Реакция обновлена' });
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({ error: 'Не удалось обновить реакцию на комментарий' });
         });
 })
 //endregion
