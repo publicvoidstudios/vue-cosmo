@@ -121,29 +121,9 @@ export default {
     this.getUsersList()
     this.contentID = parseInt(this.$route.params.id);
     this.checkContentAvailability();
-    document.getElementById('pageTitle').innerText = 'Студентам - Видео';
+    document.getElementById('pageTitle').innerText = `Студентам - Контент`;
   },
   methods: {
-    transliterate(input) {
-      const rus = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
-      const eng = ["a", "b", "v", "g", "d", "e", "yo", "zh", "z", "i", "y", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "f", "kh", "ts", "ch", "sh", "shch", "", "y", "", "e", "yu", "ya"];
-
-      return input.split('').map(function (char) {
-        // Check if the character is a Cyrillic letter
-        if (/[\u0400-\u04FF]/.test(char)) {
-          let idx = rus.indexOf(char.toLowerCase());
-          if (idx >= 0) {
-            return char === char.toUpperCase() ? eng[idx].toUpperCase() : eng[idx];
-          }
-        }
-        // Swap space character with an underscore character
-        if (char === " ") {
-          return "_";
-        }
-        // Return the character as is if it's not a Cyrillic letter
-        return char;
-      }).join('');
-    },
     async addComment(content_id, user_id, body) {
       if(body.trim(' ') !== '') {
         //If comment is not empty
