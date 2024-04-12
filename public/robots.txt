@@ -1,0 +1,6 @@
+# robots.txt for http://cosmmedic.ru
+
+User-agent: *
+Disallow: /admin
+Disallow: /login
+Disallow: /signup
