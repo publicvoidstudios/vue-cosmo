@@ -277,28 +277,30 @@ export default {
       }
     },
     createYandexShareField() {
-      // Create a script element
-      const scriptElement = document.createElement('script');
-      scriptElement.src = 'https://yastatic.net/share2/share.js';
+      setTimeout(() => {
+        // Create a script element
+        const scriptElement = document.createElement('script');
+        scriptElement.src = 'https://yastatic.net/share2/share.js';
 
-      const imgURL = document.getElementById('og_image').content;
-      console.log(imgURL)
+        const imgURL = document.getElementById('og_image').content;
+        console.log(imgURL)
 
-      // Create a div element for the share buttons
-      const divElement = document.createElement('div');
-      divElement.classList.add('ya-share2');
-      divElement.setAttribute('data-curtain', '');
-      divElement.setAttribute('data-color-scheme', 'normal');
-      divElement.setAttribute('data-image', imgURL);
-      divElement.setAttribute('data-limit', '3');
-      divElement.setAttribute('data-popup-direction', 'auto');
-      divElement.setAttribute('data-services', 'vkontakte,telegram,twitter,viber,whatsapp,lj,blogger,odnoklassniki');
+        // Create a div element for the share buttons
+        const divElement = document.createElement('div');
+        divElement.classList.add('ya-share2');
+        divElement.setAttribute('data-curtain', '');
+        divElement.setAttribute('data-color-scheme', 'normal');
+        divElement.setAttribute('data-image', imgURL);
+        divElement.setAttribute('data-limit', '3');
+        divElement.setAttribute('data-popup-direction', 'auto');
+        divElement.setAttribute('data-services', 'vkontakte,telegram,twitter,viber,whatsapp,lj,blogger,odnoklassniki');
 
-      /* Use Vue's $nextTick to access the element after the next DOM update,
-         to ensure that element is created, before trying to access it*/
-      this.$nextTick(() => {
-        this.appendYandexTags(scriptElement, divElement)
-      });
+        /* Use Vue's $nextTick to access the element after the next DOM update,
+           to ensure that element is created, before trying to access it*/
+        this.$nextTick(() => {
+          this.appendYandexTags(scriptElement, divElement)
+        });
+      }, 500)
     },
     appendYandexTags(scriptElement, divElement) {
       console.log(`Appending y tags`)
