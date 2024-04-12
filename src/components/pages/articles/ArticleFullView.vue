@@ -1,27 +1,13 @@
 <template>
   <alert-box ref="alertBox"></alert-box>
   <div class="container">
-    <div v-if="pageContent">
-      <div v-if="pageContentType === 'video'">
-        <div class="ratio ratio-16x9 rounded shadow my-3" v-html="pageContent.param2"></div>
-        <h2 class="h2 text-light-emphasis mb-3">{{ pageContent.param1 }}</h2>
-      </div>
-      <div v-if="pageContentType === 'pptx'">
-        <div class="ratio ratio-16x9 rounded shadow my-3" v-html="pageContent.param2"></div>
-        <h2 class="h2 text-light-emphasis mb-3">{{ pageContent.param1 }}</h2>
-      </div>
-      <div v-if="pageContentType === 'article'" class="my-5">
-        <h2 class="h2 text-light-emphasis mb-3 text-center">{{ pageContent.param1 }}</h2>
-        <div class="my-3" v-html="pageContent.param2"></div>
-      </div>
-      <div v-if="pageContentType === 'image'" class="my-3">
-        <img class="my-1 img-fluid" :src="pageContent.param2" alt="">
-        <p class="fs-5 text-light-emphasis mb-3">{{ pageContent.param1 }}</p>
-      </div>
+    <div class="my-4" v-if="pageContent">
+      <h1 class="h2 mb-4 text-light-emphasis text-center">{{ pageContent.title }}</h1>
+      <div class="my-3" v-html="pageContent.body"></div>
     </div>
     <!-- Share section -->
     <div id="ya-share-div" :class="{'visually-hidden' : !pageContent}" class="d-flex justify-content-start justify-content-md-end align-items-center flex-wrap py-0 px-5">
-      <p class="mt-3 me-2">Поделиться:</p>
+      <p class="mt-3 me-2">Поделиться этой статьей:</p>
     </div>
     <!-- Comments section -->
     <div class="my-3 mx-0" v-if="pageContent">
@@ -97,13 +83,13 @@ export default {
     SvgIcon
   },
   props: {
-    content: {
+    articles: {
       required: true,
       default: []
     },
     user: {
     },
-    comments: {
+    articlesComments: {
       required: true,
       default: []
     }
@@ -111,7 +97,7 @@ export default {
   data() {
     return {
       pageAnchors: [],
-      contentID: -1,
+      articleID: -1,
       comment: '',
       users: [],
       icons: {
@@ -121,10 +107,10 @@ export default {
       }
     }
   },
- mounted() {
+  mounted() {
     this.$emit('updatePageAnchors', this.pageAnchors)
     this.getUsersList()
-    this.contentID = parseInt(this.$route.params.id);
+    this.articleID = parseInt(this.$route.params.id);
     this.checkContentAvailability();
     this.setMeta();
     this.createYandexShareField()
@@ -133,7 +119,7 @@ export default {
     async addComment(content_id, user_id, body) {
       if(body.trim(' ') !== '') {
         //If comment is not empty
-        await fetch('/api/create-scomment', {
+        await fetch('/api/create-article-comment', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -164,7 +150,7 @@ export default {
         const like = reaction ? this.user.id : null;
         const dislike = reaction ? null : this.user.id;
 
-        await fetch('/api/modify-scomment', {
+        await fetch('/api/modify-article-comment', {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
@@ -195,7 +181,7 @@ export default {
 
     },
     async removeComment(id) {
-      await fetch('/api/remove-scomment', {
+      await fetch('/api/remove-article-comment', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -268,8 +254,8 @@ export default {
       return comment?.dislikes?.includes(this.user.id);
     },
     checkContentAvailability() {
-      if(this.content.length && this.contentID !== -1) {
-        if(!this.content.some(obj => obj.id === this.contentID)) {
+      if(this.articles?.length && this.articleID !== -1) {
+        if(!this.articles.some(obj => obj.id === this.articleID)) {
           this.$router.push('/404');
         }
       } else {
@@ -279,24 +265,11 @@ export default {
         }, 500)
       }
     },
-    youTubeIFrameToURL(iframe) {
-      const url = iframe.split('src="')[1].split('"')[0];
-      return url.split('embed/')[0] + 'watch?v=' + url.split('embed/')[1];
-    },
     setMeta() {
-      if(this.contentTypeTranslation && this.pageContent) {
-        console.log(`Setting page title`)
-        document.getElementById('pageTitle').innerText = `${this.contentTypeTranslation}: ${this.pageContent?.param1 || ''} - Медицина и Косметология 2.0`;
-        console.log(this.pageContentType)
+      if(this.pageContent) {
+        document.getElementById('pageTitle').innerText = `${this.pageContent?.title || 'Статья'} - Медицина и Косметология 2.0`;
         document.getElementById('og_url').content = 'http://cosmmedic.ru' + this.$route.fullPath;
-        document.getElementById('og_title').content = this.pageContent?.param1;
-        if(this.pageContentType === "image") {
-          document.getElementById('og_image').content = this.pageContent?.param2;
-        }
-        if(this.pageContentType === "video") {
-          document.getElementById('og_video').content = this.youTubeIFrameToURL(this.pageContent?.param2);
-          document.getElementById('og_video_secure_url').content = this.youTubeIFrameToURL(this.pageContent?.param2);
-        }
+        document.getElementById('og_title').content = this.pageContent?.title;
       } else {
         setTimeout(() => {
           this.setMeta()
@@ -304,79 +277,51 @@ export default {
       }
     },
     createYandexShareField() {
-      setTimeout(() => {
-        if(this.pageContentType) {
-          // Create a script element
-          const scriptElement = document.createElement('script');
-          scriptElement.src = 'https://yastatic.net/share2/share.js';
-          let imgURL = document.getElementById('og_image').content;
+      // Create a script element
+      const scriptElement = document.createElement('script');
+      scriptElement.src = 'https://yastatic.net/share2/share.js';
 
-          if(this.pageContentType === 'image') {
-            imgURL = this.pageContent?.param2;
-          }
+      const imgURL = document.getElementById('og_image').content;
+      console.log(imgURL)
 
-          const title = document.getElementById('pageTitle').innerHTML;
+      // Create a div element for the share buttons
+      const divElement = document.createElement('div');
+      divElement.classList.add('ya-share2');
+      divElement.setAttribute('data-curtain', '');
+      divElement.setAttribute('data-color-scheme', 'normal');
+      divElement.setAttribute('data-image', imgURL);
+      divElement.setAttribute('data-limit', '3');
+      divElement.setAttribute('data-popup-direction', 'auto');
+      divElement.setAttribute('data-services', 'vkontakte,telegram,twitter,viber,whatsapp,lj,blogger,odnoklassniki');
 
-          // Create a div element for the share buttons
-          const divElement = document.createElement('div');
-          divElement.classList.add('ya-share2');
-          divElement.setAttribute('data-curtain', '');
-          divElement.setAttribute('data-color-scheme', 'normal');
-          divElement.setAttribute('data-image', imgURL);
-          divElement.setAttribute('data-title', title);
-          divElement.setAttribute('data-limit', '3');
-          divElement.setAttribute('data-popup-direction', 'auto');
-          divElement.setAttribute('data-services', 'vkontakte,telegram,twitter,viber,whatsapp,lj,blogger,odnoklassniki');
+      /* Use Vue's $nextTick to access the element after the next DOM update,
+         to ensure that element is created, before trying to access it*/
+      this.$nextTick(() => {
+        this.appendYandexTags(scriptElement, divElement)
+      });
+    },
+    appendYandexTags(scriptElement, divElement) {
+      console.log(`Appending y tags`)
+      const targetElement = document.getElementById('ya-share-div');
+      if (targetElement) {
+        // Append the script
+        targetElement.appendChild(scriptElement);
 
-          /* Use Vue's $nextTick to access the element after the next DOM update,
-             to ensure that element is created, before trying to access it*/
-          this.$nextTick(() => {
-            /*this.appendYandexTags(scriptElement, divElement)*/
-            const targetElement = document.getElementById('ya-share-div');
-            if (targetElement) {
-              // Append the script
-              targetElement.appendChild(scriptElement);
-
-              // Append the div containing share buttons
-              targetElement.appendChild(divElement);
-            }
-          });
-        } else {
-          this.createYandexShareField()
-        }
-      }, 500)
+        // Append the div containing share buttons
+        targetElement.appendChild(divElement);
+      }
     }
   },
   computed: {
     pageContent() {
-      return this.content.find(item => item.id === this.contentID);
+      return this.articles.find(item => item.id === this.articleID);
     },
     filteredComments() {
-      if(this.comments.length) {
-        const filteredArray = this.comments.filter(comment => comment.content_id === this.contentID);
+      if(this.articlesComments.length) {
+        const filteredArray = this.articlesComments.filter(comment => comment.content_id === this.articleID);
         return filteredArray.sort((a, b) => b.likes?.length - a.likes?.length);
       } else {
         return []
-      }
-    },
-    pageContentType() {
-      const content = this.content.find(item => item.id === this.contentID)
-      return content?.content_type
-    },
-    contentTypeTranslation() {
-      const content = this.content.find(item => item.id === this.contentID);
-      const type = content?.content_type;
-      switch (type) {
-        case 'video':
-          return 'Видео';
-        case 'pptx':
-          return 'Презентация';
-        case 'image':
-          return 'Изображение';
-        case 'article':
-          return 'Статья';
-        default:
-          return '';
       }
     }
   }

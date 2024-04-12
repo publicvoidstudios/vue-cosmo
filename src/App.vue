@@ -26,6 +26,7 @@
         :reviews="reviews"
         :articles="articles"
         :comments="studentsComments"
+        :articles-comments="articlesComments"
 
     ></router-view>
   </div>
@@ -78,6 +79,7 @@
 <script>
 import NavigationPanel from "@/common/NavigationPanel.vue";
 import router from "@/components/router/router";
+import images from "@/imagesLoader";
 
 export default {
   components: {NavigationPanel},
@@ -105,7 +107,13 @@ export default {
       coursesItems: undefined,
       reviews: undefined,
       articles: undefined,
-      studentsComments: undefined
+      studentsComments: undefined,
+      articlesComments: undefined,
+
+      //Meta
+      ogTitle: '',
+      ogImage: '',
+      ogURL: ''
     }
   },
   methods: {
@@ -304,6 +312,26 @@ export default {
           });
 
     },
+    async loadArticlesComments(){
+      const storeArticlesComments = (data) => {
+        if(typeof data === 'object'){
+          localStorage.setItem('articles_comments', JSON.stringify(data));
+        } else {
+          localStorage.setItem('articles_comments', JSON.stringify([]));
+        }
+      }
+
+      await fetch('/api/load-articles-comments', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({})
+      })
+          .then(res => res.json())
+          .then(data => {
+            storeArticlesComments(data);
+          });
+
+    },
     //endregion
     async updateFromDB() {
       try {
@@ -331,8 +359,11 @@ export default {
         await this.loadStudentsComments()
         this.studentsComments = this.getLocalStorageData('students_comments');
 
+        await this.loadArticlesComments()
+        this.articlesComments = this.getLocalStorageData('articles_comments');
+
       } catch (err) {
-        console.log(`An error occurred on loading data from database: ${err}`)
+        console.warn(`An error occurred on loading data from database: ${err}`)
       }
     },
     getLocalStorageData(localstorage_item_name) {
@@ -376,6 +407,17 @@ export default {
       localStorage.setItem('reviews', JSON.stringify([]));
       localStorage.setItem('articles', JSON.stringify([]));
       localStorage.setItem('students_comments', JSON.stringify([]));
+      localStorage.setItem('articles_comments', JSON.stringify([]));
+    },
+
+    updateMeta() {
+      this.ogTitle = document.getElementById('pageTitle').innerText;
+      this.ogImage = images['logo'];
+      this.ogURL = this.$route.fullPath;
+
+      document.getElementById('og_title').content = this.ogTitle;
+      document.getElementById('og_image').content = 'http://cosmmedic.ru' + this.ogImage;
+      document.getElementById('og_url').content = 'http://cosmmedic.ru' + this.ogURL;
     }
   },
   beforeMount() {
@@ -385,6 +427,7 @@ export default {
   },
   mounted() {
     this.initTheme();
+    this.updateMeta()
   }
 }
 </script>

@@ -8,6 +8,7 @@ import Profile from "@/components/pages/Profile.vue";
 import SignUpPage from "@/components/pages/SignUpPage.vue";
 import NotFoundPage from "@/components/pages/NotFoundPage.vue";
 import ContentPage from "@/components/pages/students/content_pages/ContentPage.vue";
+import ArticleFullView from "@/components/pages/articles/ArticleFullView.vue";
 
 
 const routes = [
@@ -30,6 +31,10 @@ const routes = [
     {
         path: '/articles',
         component: Articles
+    },
+    {
+        path: '/article/:id',
+        component: ArticleFullView
     },
     {
         path: '/login',

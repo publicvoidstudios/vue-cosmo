@@ -10,7 +10,8 @@
     </div>
     <hr>
     <article style="max-height: 300px" class="overflow-hidden" v-html="article.body"></article>
-    <button class="btn btn-primary align-self-end mb-3 mt-1" data-bs-toggle="modal" :data-bs-target="'#modalReader' + article.id">Читать полностью</button>
+    <!--    <button class="btn btn-primary align-self-end mb-3 mt-1" data-bs-toggle="modal" :data-bs-target="'#modalReader' + article.id">Читать полностью</button>-->
+    <button class="btn btn-primary align-self-end mb-3 mt-1" @click="this.$router.push(`/article/${article.id}`)">Читать полностью</button>
   </div>
 
   <div v-if="forStudents" class="container bg-light-subtle rounded shadow d-flex flex-column my-3 p-4">
