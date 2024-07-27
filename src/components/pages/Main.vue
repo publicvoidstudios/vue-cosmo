@@ -54,7 +54,8 @@
             <section-name :small="true">КУРС «СЕСТРИНСКОЕ ДЕЛО В КОСМЕТОЛОГИИ»</section-name>
           </template>
           <template v-slot:desc>
-            <section-desc :small="true">Обучение в группе и индивидуально. Базовый курс для начинающих. <strong>Повышение квалификации для специалистов.</strong></section-desc>
+            <section-desc :small="true">Обучение в группе и индивидуально. Базовый курс для начинающих. <strong>Повышение
+              квалификации для специалистов.</strong></section-desc>
           </template>
         </section-elements>
 
@@ -64,7 +65,8 @@
             <section-name :small="true">КУРС «КОСМЕТИК-ЭСТЕТИСТ»</section-name>
           </template>
           <template v-slot:desc>
-            <section-desc :small="true">Обучение основам красоты. <strong>Медицинское образование не требуется.</strong></section-desc>
+            <section-desc :small="true">Обучение основам красоты. <strong>Медицинское образование не требуется.</strong>
+            </section-desc>
           </template>
         </section-elements>
       </template>
@@ -118,28 +120,27 @@
 </template>
 
 <script>
-import MainSection from "@/components/pages/main/MainSection.vue";
-import SectionName from "@/components/pages/main/SectionName.vue";
-import SectionDesc from "@/components/pages/main/SectionDescription.vue";
-import SectionElements from "@/components/pages/main/SectionElements.vue";
-import images from "@/imagesLoader";
-import Collage from "@/components/pages/main/Collage.vue";
-import About from "@/components/pages/main/About.vue";
-import People from "@/components/pages/main/People.vue";
+import MainSection from '@/components/pages/main/MainSection.vue';
+import SectionName from '@/components/pages/main/SectionName.vue';
+import SectionDesc from '@/components/pages/main/SectionDescription.vue';
+import SectionElements from '@/components/pages/main/SectionElements.vue';
+import Collage from '@/components/pages/main/Collage.vue';
+import About from '@/components/pages/main/About.vue';
+import People from '@/components/pages/main/People.vue';
 
 export default {
-  components: {People, About, Collage, SectionElements, SectionDesc, SectionName, MainSection},
+  components: { People, About, Collage, SectionElements, SectionDesc, SectionName, MainSection },
   props: {
     servicesItems: {
       type: Array,
-      required: true
+      required: true,
     },
     coursesItems: {
       type: Array,
-      required: true
-    }
+      required: true,
+    },
   },
-  data () {
+  data() {
     return {
       pageTitle: 'Медицина и косметология 2.0',
       popupContent: '',
@@ -149,64 +150,64 @@ export default {
         {
           name: 'VK',
           description: undefined,
-          imageURL: images["vk_icon"],
+          imageURL: 'src/resources/vk_icon.jpg',
           contactItem: true,
-          locationURL: 'https://vk.com/im?sel=189596649'
+          locationURL: 'https://vk.com/im?sel=189596649',
         },
         {
           name: 'Telegram',
           description: undefined,
-          imageURL: images["tg_icon"],
+          imageURL: 'src/resources/tg_icon.jpg',
           contactItem: true,
-          locationURL: 'https://t.me/HelenaFreedom'
+          locationURL: 'https://t.me/HelenaFreedom',
         },
         {
           name: 'WhatsApp',
           description: undefined,
-          imageURL: images["whatsapp_icon"],
+          imageURL: 'src/resources/whatsapp_icon.jpg',
           contactItem: true,
-          locationURL: 'https://wa.me/+79956499610?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5,%20'
-        }
+          locationURL: 'https://wa.me/+79956499610?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5,%20',
+        },
       ],
       pageAnchors: [
         {
           id: 0,
           link: 'home',
-          displayName: 'Домой'
+          displayName: 'Домой',
         },
         {
           id: 1,
           link: 'cabinet',
-          displayName: 'Кабинет'
+          displayName: 'Кабинет',
         },
         {
           id: 2,
           link: 'courses',
-          displayName: 'Курсы'
+          displayName: 'Курсы',
         },
         {
           id: 3,
           link: 'about',
-          displayName: 'Обо мне'
+          displayName: 'Обо мне',
         },
         {
           id: 4,
           link: 'contacts',
-          displayName: 'Контакты'
+          displayName: 'Контакты',
         },
 
         {
           id: 5,
           link: 'coworkers',
-          displayName: 'Партнеры'
-        }
+          displayName: 'Партнеры',
+        },
       ],
       persons: [
         {
           name: 'Елена Усова',
           description: `<p><strong>Профессиональный профиль:</strong> квалификация - врач. Окончила ТашГосМИ-1 (ТМА) в 1997 году. До поступления в медицинский институт, в 1991 году окончила Медицинское училище и на втором курсе медицинского училища, в 1990 году, получила свой первый диплом косметолога с медицинским образованием.</p>
                         <p><strong>Опыт работы в сфере косметологии</strong> с 1991 года. Основная специализация – решение проблем старения и связанных с процессом старения деформационных изменений контура лица, области декольте и тела, в целом, пигментации кожи в различных областях тела, включая лицо, зону декольте, интимную зону, связанных с возрастными изменениями, состояний кожи и волос после перенесенных соматических и инфекционных заболеваний с фокусом на эстетические процедуры и дерматологическую косметологию. Восстановление эстетической привлекательности кожи после лечения акне, рубцовых изменений, пятен поствоспалительного характера и пигментации, как после родов, так и после перенесенных воспалений кожи.</p>
-                        <p><strong>Образование:</strong> в последующие годы работы в сфере косметологии ежегодно, а иногда и не один раз в год, повышаю свою квалификацию по различным направлениям. Регулярно посещаю различные конференции и семинары, направленные на обновление знаний и умений в области красоты и медицины. Каждые три года повышаю квалификацию как преподаватель,освоила преподавание в симуляционном центре медицинского института БФУ им. И. Канта в 2020 году.</p>
+                        <p><strong>Образование:</strong> в последующие годы работы в сфере косметологии ежегодно, а иногда и не один раз в год, повышаю свою квалификацию по различным направлениям. Регулярно посещаю различные конференции и семинары, направленные на обновление знаний и умений в области красоты и медицины. Каждые три года повышаю квалификацию как преподаватель, освоила преподавание в симуляционном центре медицинского института БФУ им. И. Канта в 2020 году.</p>
                         <p><strong>Моя профессиональная деятельность как косметолога</strong> включает в себя следующие навыки:</p>
                         <p>Консультирование состояния кожи и определение ее проблем и потребностей</p>
                         <p>Планирование комплекса процедур и разработка плана процедур, ориентированных на конкретные потребности кожи.</p>
@@ -215,7 +216,7 @@ export default {
                         <p>С радостью восстановлю жизненные силы кожи при помощи капиллярной мезотерапии и процедуры биоревитализации. Применяю в своей работе тред-терапию, липоскульптуру лица и тела.</p>
                         <p>Веду преподавательскую деятельность с 2009 года. С 2012 года являюсь преподавателем Балтийского Федерального Университета им И. Канта высшего и среднего медицинского образования. Преподаю такие предметы, как Анатомия и физиология человека, Основы патологии, Здоровый образ жизни, Уход за больным.</p>
                         <p>Преподаю на курсах дополнительного образования БФУ им И. Канта по направлениям «Эстетическая косметология» и «Сестринское дело в косметологии» в течение многих лет.</p>`,
-          img_url: images["persons/elus"],
+          img_url: 'src/resources/persons/elus.png',
           html_id: 'elena_usova',
         },
         {
@@ -233,7 +234,7 @@ export default {
                         <p>Моя роль не ограничивается только практической деятельностью. Я также являюсь преподавателем в центре непрерывного медицинского образования БФУ, где обучаю будущих специалистов искусству эстетической косметологии. Я веду курсы по перманентному макияжу, ламинированию бровей и ресниц, а также курсы повышения квалификации для косметологов, включая плазмолифтинг и контурную пластику плазмогелем.</p>
                         <p>Мой подход к каждому клиенту индивидуален, и я уделяю максимум внимания качеству и безопасности всех процедур.</p>
                         <p>Я горжусь тем, что могу помочь людям не только выглядеть лучше, но и чувствовать себя увереннее и счастливее.</p>`,
-          img_url: images["persons/cowork3"],
+          img_url: 'src/resources/persons/cowork3.png',
           html_id: 'victoria_belova',
         },
         {
@@ -242,7 +243,7 @@ export default {
                         <p>Официальный дилер профессиональной косметики Anna Lotan (Израиль)</p>
                         <p>Адрес: улица Юбилейная, 6, салон красоты "Версаль".</p>
                         <p>+7 906 230 25 17</p>`,
-          img_url: images["persons/cowork4"],
+          img_url: 'src/resources/persons/cowork4.png',
           html_id: 'natalia_zhirnova',
         },
         {
@@ -259,7 +260,7 @@ export default {
                           <li>Разрабатываю индивидуальные программы по уходу за лицом.</li>
                           <li>Консультации по подбору домашнего ухода.</li>
                         </ul>`,
-          img_url: images["persons/cowork1"],
+          img_url: 'src/resources/persons/cowork1.png',
           html_id: 'olga_covalchuk',
         }
         ,
@@ -281,27 +282,27 @@ export default {
                         <p>Когда массаж становится частью косметологических процедур, он превращается в
                         исключительное путешествие к самосовершенствованию и гармонии кожи. Насладись этим
                         удивительным опытом и дари себе красоту и заботу, которые заслуживаешь!</p>`,
-          img_url: images["persons/cowork2"],
+          img_url: 'src/resources/persons/cowork2.png',
           html_id: 'tatiana_bedareva',
-        }
-      ]
-    }
+        },
+      ],
+    };
   },
   computed: {
     coursesMedical() {
-      if(this.coursesItems) {
-        return this.coursesItems.filter(course => course.medical === true)
+      if (this.coursesItems) {
+        return this.coursesItems.filter(course => course.medical === true);
       } else {
         return [];
       }
     },
     coursesNonMedical() {
-      if(this.coursesItems) {
-        return this.coursesItems.filter(course => course.medical === false)
+      if (this.coursesItems) {
+        return this.coursesItems.filter(course => course.medical === false);
       } else {
         return [];
       }
-    }
+    },
   },
   beforeMount() {
     this.$emit('dataUpdateRequest');
@@ -309,6 +310,6 @@ export default {
   mounted() {
     document.getElementById('pageTitle').innerText = 'Медицина и косметология 2.0';
     this.$emit('updatePageAnchors', this.pageAnchors);
-  }
-}
+  },
+};
 </script>

@@ -18,26 +18,24 @@
 </template>
 
 <script>
-import images from "@/imagesLoader";
-
 export default {
   name: "collage",
   data() {
     return {
       imageList: [
-        images["collage/img_1"],
-        images["collage/img_2"],
-        images["collage/img_3"],
-        images["collage/img_4"],
-        images["collage/img_5"],
-        images["collage/img_6"],
-        images["collage/img_7"],
-        images["collage/img_8"],
-        images["collage/img_9"],
-        images["collage/img_10"],
-        images["collage/img_11"],
-        images["collage/img_12"],
-          images["collage/img_13"]
+        "src/resources/collage/img_1.jpg",
+        "src/resources/collage/img_2.jpg",
+        "src/resources/collage/img_3.jpg",
+        "src/resources/collage/img_4.jpg",
+        "src/resources/collage/img_5.jpg",
+        "src/resources/collage/img_6.jpg",
+        "src/resources/collage/img_7.jpg",
+        "src/resources/collage/img_8.jpg",
+        "src/resources/collage/img_9.jpg",
+        "src/resources/collage/img_10.jpg",
+        "src/resources/collage/img_11.jpg",
+        "src/resources/collage/img_12.jpg",
+        "src/resources/collage/img_13.jpg"
       ],
       shuffledIndexes: []
 
