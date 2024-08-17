@@ -35,7 +35,7 @@ expressApp.use(bodyParser.json());
 expressApp.use(express.static(path.join(__dirname)));
 
 expressApp.use(cors({
-    origin: 'http://localhost',
+    origin: 'http://cosmmedic.ru',
     methods: 'GET,HEAD,POST,PUT,PATCH,DELETE',
     credentials: true
 }))
