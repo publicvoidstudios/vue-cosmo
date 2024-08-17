@@ -60,7 +60,7 @@ const routes = [
 
 const router = createRouter({
     routes,
-    history: createWebHistory(process.env.BASE_URL),
+    history: createWebHistory(import.meta.env.BASE_URL),
     scrollBehavior(to, from, savedPosition) {
     return { top: 0 }; // This will scroll to the top of the page when navigating
     // return null; // This will prevent saving the scroll position

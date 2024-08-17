@@ -79,7 +79,6 @@
 <script>
 import NavigationPanel from "@/common/NavigationPanel.vue";
 import router from "@/components/router/router";
-import images from "@/imagesLoader";
 
 export default {
   components: {NavigationPanel},
@@ -412,7 +411,7 @@ export default {
 
     updateMeta() {
       this.ogTitle = document.getElementById('pageTitle').innerText;
-      this.ogImage = images['logo'];
+      this.ogImage = 'src/resources/logo.png';
       this.ogURL = this.$route.fullPath;
 
       document.getElementById('og_title').content = this.ogTitle;
