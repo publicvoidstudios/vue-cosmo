@@ -200,7 +200,7 @@ export default {
                     console.error(error);
                   });
 
-              const response = await fetch('http://localhost:3000/api/update-user-password', {
+              const response = await fetch('http://cosmmedic.ru:3000/api/update-user-password', {
                 method: 'PUT',
                 headers: {
                   'Content-Type': 'application/json'
@@ -256,7 +256,7 @@ export default {
           //Not all fields are provided
           this.$refs.alertBox.alertMessage('Заполните все поля', false)
         } else {
-          const response = await fetch('http://localhost:3000/api/update-user-data', {
+          const response = await fetch('http://cosmmedic.ru:3000/api/update-user-data', {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json'

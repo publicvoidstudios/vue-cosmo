@@ -119,7 +119,7 @@ export default {
     async addComment(content_id, user_id, body) {
       if(body.trim(' ') !== '') {
         //If comment is not empty
-        await fetch('http://localhost:3000/api/create-article-comment', {
+        await fetch('http://cosmmedic.ru:3000/api/create-article-comment', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -150,7 +150,7 @@ export default {
         const like = reaction ? this.user.id : null;
         const dislike = reaction ? null : this.user.id;
 
-        await fetch('http://localhost:3000/api/modify-article-comment', {
+        await fetch('http://cosmmedic.ru:3000/api/modify-article-comment', {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
@@ -181,7 +181,7 @@ export default {
 
     },
     async removeComment(id) {
-      await fetch('http://localhost:3000/api/remove-article-comment', {
+      await fetch('http://cosmmedic.ru:3000/api/remove-article-comment', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -201,7 +201,7 @@ export default {
           });
     },
     async getUsersList() {
-      this.users = await fetch('http://localhost:3000/api/load-users', {
+      this.users = await fetch('http://cosmmedic.ru:3000/api/load-users', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({})

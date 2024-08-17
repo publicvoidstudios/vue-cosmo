@@ -29,7 +29,7 @@ export default {
         localStorage.setItem('articles', JSON.stringify(data));
       }
 
-      await fetch('http://localhost:3000/api/load-articles', {
+      await fetch('http://cosmmedic.ru:3000/api/load-articles', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({})

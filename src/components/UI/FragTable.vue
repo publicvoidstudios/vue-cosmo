@@ -713,7 +713,7 @@ export default {
     },
     async updateReviewApproval(id, approved) {
       try {
-        const response = await fetch('http://localhost:3000/api/update-review-approval', {
+        const response = await fetch('http://cosmmedic.ru:3000/api/update-review-approval', {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
@@ -900,7 +900,7 @@ export default {
     },
     async modifySection(id, name, html_id, img_url) {
       try {
-        const response = await fetch('http://localhost:3000/api/modify-section', {
+        const response = await fetch('http://cosmmedic.ru:3000/api/modify-section', {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
@@ -929,7 +929,7 @@ export default {
     },
     async modifySubsection(id, parent_section_name, subsection_name, html_id, img_url) {
       try {
-        const response = await fetch('http://localhost:3000/api/modify-subsection', {
+        const response = await fetch('http://cosmmedic.ru:3000/api/modify-subsection', {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
@@ -957,7 +957,7 @@ export default {
     },
     async modifyContent(id, subsection_id, content_type, param1, param2) {
       try {
-        const response = await fetch('http://localhost:3000/api/modify-content', {
+        const response = await fetch('http://cosmmedic.ru:3000/api/modify-content', {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
@@ -985,7 +985,7 @@ export default {
     },
     async modifyService(id, name, html_id, description, img_url) {
       try {
-        const response = await fetch('http://localhost:3000/api/modify-service', {
+        const response = await fetch('http://cosmmedic.ru:3000/api/modify-service', {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
@@ -1013,7 +1013,7 @@ export default {
     },
     async modifyCourse(id, name, html_id, description, img_url, medical) {
       try {
-        const response = await fetch('http://localhost:3000/api/modify-course', {
+        const response = await fetch('http://cosmmedic.ru:3000/api/modify-course', {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
@@ -1042,7 +1042,7 @@ export default {
     },
     async modifyArticle(id, title, body, author) {
       try {
-        const response = await fetch('http://localhost:3000/api/modify-article', {
+        const response = await fetch('http://cosmmedic.ru:3000/api/modify-article', {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'

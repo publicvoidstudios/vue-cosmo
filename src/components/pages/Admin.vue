@@ -341,7 +341,7 @@ export default {
 
     },
     async createSection(sectionName, sectionHTMLID, sectionImgURL) {
-      await fetch('http://localhost:3000/api/create-section', {
+      await fetch('http://cosmmedic.ru:3000/api/create-section', {
           method: 'POST',
           headers: {
                 'Content-Type': 'application/json'
@@ -366,7 +366,7 @@ export default {
           });
     },
     async createSubsection(sub_parent_name, sub_name, sub_html_id, sub_img_url) {
-      await fetch('http://localhost:3000/api/create-subsection', {
+      await fetch('http://cosmmedic.ru:3000/api/create-subsection', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -392,7 +392,7 @@ export default {
           });
     },
     async createContent(content_parent_name, content_type, content_param_1, content_param_2) {
-      await fetch('http://localhost:3000/api/create-content', {
+      await fetch('http://cosmmedic.ru:3000/api/create-content', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -418,7 +418,7 @@ export default {
           });
     },
     async createService(name, html_id, description, img_url) {
-      await fetch('http://localhost:3000/api/create-service', {
+      await fetch('http://cosmmedic.ru:3000/api/create-service', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -446,7 +446,7 @@ export default {
     async createCourse(name, html_id, description, img_url, medical) {
       console.log(`Creating course at Admin.vue. Name: ${name}. HTML_ID: ${html_id}. Desc: ${description}. IMG URL: ${img_url}. IS MEDICAL: ${medical}.`)
 
-      await fetch('http://localhost:3000/api/create-course', {
+      await fetch('http://cosmmedic.ru:3000/api/create-course', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -473,7 +473,7 @@ export default {
           });
     },
     async createArticle(title, body, author) {
-      await fetch('http://localhost:3000/api/create-article', {
+      await fetch('http://cosmmedic.ru:3000/api/create-article', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
