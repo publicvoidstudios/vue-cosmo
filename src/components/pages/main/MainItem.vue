@@ -265,7 +265,7 @@ export default {
       this.review.rating = rating;
     },
     async createReview(parent_html_id, user_name, body, rating) {
-      await fetch('/api/create-review', {
+      await fetch('http://localhost:3000/api/create-review', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

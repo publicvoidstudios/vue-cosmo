@@ -16,10 +16,10 @@
           </li>
           <!--     Common dropdown menu     -->
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle text-uppercase" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="nav-link dropdown-toggle text-uppercase" href="#" role="button" @click="toggleDropdown" aria-expanded="false">
               Ещё
             </a>
-            <ul class="dropdown-menu">
+            <ul class="dropdown-menu" :style="dropdownExpanded ? dropdownStyle : null">
               <li><a class="dropdown-item disabled" href="/students">Студентам</a></li>
               <li><a class="dropdown-item" href="/articles">Статьи</a></li>
             </ul>
@@ -71,7 +71,12 @@ export default {
         themeLightDark: mdiThemeLightDark,
         login: mdiLogin,
         logout: mdiLogout
-      }
+      },
+      dropdownStyle: {
+        display: 'flex !important',
+        flexDirection: 'column',
+      },
+      dropdownExpanded: false
     };
   },
   methods: {
@@ -83,6 +88,9 @@ export default {
         link.classList.remove('active');
       });
       document.querySelector('#link_' + id).classList.add('active');
+    },
+    toggleDropdown() {
+      this.dropdownExpanded = !this.dropdownExpanded;
     }
   }
 }

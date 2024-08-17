@@ -128,6 +128,8 @@ import Collage from '@/components/pages/main/Collage.vue';
 import About from '@/components/pages/main/About.vue';
 import People from '@/components/pages/main/People.vue';
 
+import * as images from '@/resources'
+
 export default {
   components: { People, About, Collage, SectionElements, SectionDesc, SectionName, MainSection },
   props: {
@@ -150,21 +152,21 @@ export default {
         {
           name: 'VK',
           description: undefined,
-          imageURL: 'src/resources/vk_icon.jpg',
+          imageURL: images.vkIcon,
           contactItem: true,
           locationURL: 'https://vk.com/im?sel=189596649',
         },
         {
           name: 'Telegram',
           description: undefined,
-          imageURL: 'src/resources/tg_icon.jpg',
+          imageURL: images.tgIcon,
           contactItem: true,
           locationURL: 'https://t.me/HelenaFreedom',
         },
         {
           name: 'WhatsApp',
           description: undefined,
-          imageURL: 'src/resources/whatsapp_icon.jpg',
+          imageURL: images.whatsAppIcon,
           contactItem: true,
           locationURL: 'https://wa.me/+79956499610?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5,%20',
         },
@@ -215,7 +217,7 @@ export default {
                         <p>С радостью восстановлю жизненные силы кожи при помощи капиллярной мезотерапии и процедуры биоревитализации. Применяю в своей работе тред-терапию, липоскульптуру лица и тела.</p>
                         <p>Веду преподавательскую деятельность с 2009 года. С 2012 года являюсь преподавателем Балтийского Федерального Университета им И. Канта высшего и среднего медицинского образования. Преподаю такие предметы, как Анатомия и физиология человека, Основы патологии, Здоровый образ жизни, Уход за больным.</p>
                         <p>Преподаю на курсах дополнительного образования БФУ им И. Канта по направлениям «Эстетическая косметология» и «Сестринское дело в косметологии» в течение многих лет.</p>`,
-          img_url: 'src/resources/persons/elus.png',
+          img_url: images.elUs,
           html_id: 'elena_usova',
         },
         {
@@ -224,7 +226,7 @@ export default {
                         <p>Официальный дилер профессиональной косметики Anna Lotan (Израиль)</p>
                         <p>Адрес: улица Юбилейная, 6, салон красоты "Версаль".</p>
                         <p>+7 906 230 25 17</p>`,
-          img_url: 'src/resources/persons/cowork4.png',
+          img_url: images.personCowork4,
           html_id: 'natalia_zhirnova',
         },
         {
@@ -241,7 +243,7 @@ export default {
                           <li>Разрабатываю индивидуальные программы по уходу за лицом.</li>
                           <li>Консультации по подбору домашнего ухода.</li>
                         </ul>`,
-          img_url: 'src/resources/persons/cowork1.png',
+          img_url: images.personCowork1,
           html_id: 'olga_covalchuk',
         },
         {
@@ -262,7 +264,7 @@ export default {
                         <p>Когда массаж становится частью косметологических процедур, он превращается в
                         исключительное путешествие к самосовершенствованию и гармонии кожи. Насладись этим
                         удивительным опытом и дари себе красоту и заботу, которые заслуживаешь!</p>`,
-          img_url: 'src/resources/persons/cowork2.png',
+          img_url: images.personCowork2,
           html_id: 'tatiana_bedareva',
         },
       ],

@@ -163,7 +163,7 @@ export default {
         }
       }
 
-      await fetch('/api/load-sections', {
+      await fetch('http://localhost:3000/api/load-sections', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({})
@@ -182,7 +182,7 @@ export default {
         }
       }
 
-      await fetch('/api/load-subsections', {
+      await fetch('http://localhost:3000/api/load-subsections', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({})
@@ -201,7 +201,7 @@ export default {
         }
       }
 
-      await fetch('/api/load-content', {
+      await fetch('http://localhost:3000/api/load-content', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({})
@@ -220,7 +220,7 @@ export default {
         }
       }
 
-      await fetch('/api/load-services', {
+      await fetch('http://localhost:3000/api/load-services', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({})
@@ -240,7 +240,7 @@ export default {
         }
       }
 
-      await fetch('/api/load-courses', {
+      await fetch('http://localhost:3000/api/load-courses', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({})
@@ -260,7 +260,7 @@ export default {
         }
       }
 
-      await fetch('/api/load-reviews', {
+      await fetch('http://localhost:3000/api/load-reviews', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({})
@@ -280,7 +280,7 @@ export default {
         }
       }
 
-      await fetch('/api/load-articles', {
+      await fetch('http://localhost:3000/api/load-articles', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({})
@@ -300,7 +300,7 @@ export default {
         }
       }
 
-      await fetch('/api/load-scomments', {
+      await fetch('http://localhost:3000/api/load-scomments', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({})
@@ -320,7 +320,7 @@ export default {
         }
       }
 
-      await fetch('/api/load-articles-comments', {
+      await fetch('http://localhost:3000/api/load-articles-comments', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({})

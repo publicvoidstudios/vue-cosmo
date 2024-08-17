@@ -18,24 +18,26 @@
 </template>
 
 <script>
+import * as images from '@/resources';
+
 export default {
   name: "collage",
   data() {
     return {
       imageList: [
-        "src/resources/collage/img_1.jpg",
-        "src/resources/collage/img_2.jpg",
-        "src/resources/collage/img_3.jpg",
-        "src/resources/collage/img_4.jpg",
-        "src/resources/collage/img_5.jpg",
-        "src/resources/collage/img_6.jpg",
-        "src/resources/collage/img_7.jpg",
-        "src/resources/collage/img_8.jpg",
-        "src/resources/collage/img_9.jpg",
-        "src/resources/collage/img_10.jpg",
-        "src/resources/collage/img_11.jpg",
-        "src/resources/collage/img_12.jpg",
-        "src/resources/collage/img_13.jpg"
+        images.collageImg1,
+        images.collageImg2,
+        images.collageImg3,
+        images.collageImg4,
+        images.collageImg5,
+        images.collageImg6,
+        images.collageImg7,
+        images.collageImg8,
+        images.collageImg9,
+        images.collageImg10,
+        images.collageImg11,
+        images.collageImg12,
+        images.collageImg13,
       ],
       shuffledIndexes: []
 

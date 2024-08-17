@@ -133,7 +133,7 @@ export default {
     async addComment(content_id, user_id, body) {
       if(body.trim(' ') !== '') {
         //If comment is not empty
-        await fetch('/api/create-scomment', {
+        await fetch('http://localhost:3000/api/create-scomment', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -164,7 +164,7 @@ export default {
         const like = reaction ? this.user.id : null;
         const dislike = reaction ? null : this.user.id;
 
-        await fetch('/api/modify-scomment', {
+        await fetch('http://localhost:3000/api/modify-scomment', {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
@@ -195,7 +195,7 @@ export default {
 
     },
     async removeComment(id) {
-      await fetch('/api/remove-scomment', {
+      await fetch('http://localhost:3000/api/remove-scomment', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -215,7 +215,7 @@ export default {
           });
     },
     async getUsersList() {
-      this.users = await fetch('/api/load-users', {
+      this.users = await fetch('http://localhost:3000/api/load-users', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({})

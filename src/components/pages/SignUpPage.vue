@@ -100,7 +100,7 @@ export default {
                 console.error(error);
               });
 
-          await fetch('/api/register-user', {
+          await fetch('http://localhost:3000/api/register-user', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'

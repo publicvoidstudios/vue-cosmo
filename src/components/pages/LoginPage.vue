@@ -57,7 +57,7 @@ export default {
   },
   methods: {
     async authenticateUser() {
-      const users = await fetch('/api/load-users', {
+      const users = await fetch('http://localhost:3000/api/load-users', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({})

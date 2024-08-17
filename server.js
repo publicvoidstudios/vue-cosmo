@@ -7,6 +7,8 @@ const bodyParser = require('body-parser');
 //Knex allows to access database
 const knex = require('knex');
 
+const cors = require('cors');
+
 //Make register user backlink. Connect database to server
 const db = knex({
     //'pg' - because we use postgres
@@ -30,11 +32,17 @@ const expressApp = express();
 
 expressApp.use(bodyParser.json());
 // Serve static files (e.g., HTML, CSS, JS) from a specific directory
-expressApp.use(express.static(path.join(__dirname, 'public')));
+expressApp.use(express.static(path.join(__dirname)));
+
+expressApp.use(cors({
+    origin: 'http://localhost',
+    methods: 'GET,HEAD,POST,PUT,PATCH,DELETE',
+    credentials: true
+}))
 
 // Handle root path request
 expressApp.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 //region API REQUESTS
